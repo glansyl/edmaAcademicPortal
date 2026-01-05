@@ -135,6 +135,13 @@ export function StudentsList() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate contact number
+    if (formData.contact.length !== 10) {
+      toast.error('Contact number must be exactly 10 digits')
+      return
+    }
+    
     try {
       // Cast gender to proper type and map fields for API
       const { department, contact, ...restFormData } = formData
@@ -599,8 +606,14 @@ export function StudentsList() {
                   type="date"
                   value={formData.dateOfBirth}
                   onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                  max={new Date(new Date().setFullYear(new Date().getFullYear() - 16)).toISOString().split('T')[0]}
+                  min={new Date(new Date().setFullYear(new Date().getFullYear() - 30)).toISOString().split('T')[0]}
+                  className="cursor-pointer"
                   required
                 />
+                <p className="text-xs text-gray-500 mt-1">
+                  Age must be between 16-30 years
+                </p>
               </div>
             </div>
 
@@ -608,10 +621,34 @@ export function StudentsList() {
               <Label htmlFor="contact">Contact</Label>
               <Input
                 id="contact"
+                type="tel"
                 value={formData.contact}
-                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                onChange={(e) => {
+                  // Only allow numbers
+                  const value = e.target.value.replace(/\D/g, '')
+                  setFormData({ ...formData, contact: value })
+                }}
+                onKeyPress={(e) => {
+                  // Prevent non-numeric characters from being typed
+                  if (!/[0-9]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab') {
+                    e.preventDefault()
+                  }
+                }}
+                placeholder="Enter 10-digit mobile number"
+                maxLength={10}
+                className={formData.contact.length > 0 && formData.contact.length !== 10 ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : ''}
                 required
               />
+              {formData.contact.length > 0 && formData.contact.length !== 10 && (
+                <p className="text-xs text-red-600 mt-1">
+                  Contact number must be exactly 10 digits ({formData.contact.length}/10)
+                </p>
+              )}
+              {formData.contact.length === 10 && (
+                <p className="text-xs text-green-600 mt-1">
+                  ✓ Valid contact number
+                </p>
+              )}
             </div>
 
             {!editingStudent && (
