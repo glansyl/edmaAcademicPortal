@@ -384,7 +384,7 @@ This project is licensed under the MIT License.
 
 ## 📞 Support
 
-For support, email support@eadms.com or open an issue in the repository.
+For support, email glansyl.dsouzaa@gmail.com or open an issue in the repository.
 
 ---
 

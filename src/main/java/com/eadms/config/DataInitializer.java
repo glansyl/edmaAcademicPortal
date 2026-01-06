@@ -10,11 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDate;
-import java.util.List;
-
 /**
- * Data Initializer - Creates sample data for demonstration
+ * Data Initializer - Creates default admin user
  */
 @Configuration
 @RequiredArgsConstructor
@@ -56,10 +53,7 @@ public class DataInitializer {
             userRepository.save(adminUser);
             log.info("✅ Default admin user created successfully!");
             log.info("📧 Admin Login: {} / {}", adminEmail, adminPassword);
-            
-            // Sample data creation is disabled - you can add your own data through the admin panel
-            log.info("ℹ️  Sample data creation is disabled. Use the admin panel to add teachers, students, and courses.");
+            log.info("ℹ️  Use the admin panel to add teachers, students, and courses.");
         };
     }
 }
-
