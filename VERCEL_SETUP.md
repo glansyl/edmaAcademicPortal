@@ -2,19 +2,58 @@
 
 ## 🚀 Quick Setup Guide
 
-### 1. Environment Variables in Vercel
+# Vercel Deployment Setup
+
+## 🚀 Quick Setup Guide
+
+### 1. Generate JWT Secret
+Run this command to generate a secure JWT secret:
+```bash
+python3 scripts/generate-jwt-secret.py
+```
+
+### 2. Environment Variables in Render.com (Backend)
+Go to your Render.com service → Environment tab and add:
+
+```bash
+# JWT Configuration (REQUIRED)
+JWT_SECRET=your-generated-jwt-secret-from-script-above
+JWT_EXPIRATION=86400000
+
+# Database (Auto-configured by Render)
+DATABASE_URL=postgresql://username:password@host:port/database
+
+# CORS Configuration
+CORS_ALLOWED_ORIGINS=https://your-frontend-url.vercel.app,http://localhost:5173
+
+# Spring Profile
+SPRING_PROFILES_ACTIVE=prod
+
+# Server Port (Optional - Render auto-assigns)
+PORT=8080
+```
+
+### 3. Environment Variables in Vercel (Frontend)
 Go to your Vercel project → Settings → Environment Variables and add:
 
-```
-VITE_API_URL = https://your-backend-url.onrender.com/api
-VITE_WS_URL = https://your-backend-url.onrender.com
+```bash
+VITE_API_URL=https://your-backend-url.onrender.com/api
+VITE_WS_URL=https://your-backend-url.onrender.com
 ```
 
-### 2. Backend CORS Configuration
-In your Render.com backend, add this environment variable:
+### 4. Local Development Environment
+Create/update `frontend/.env.local` (for local development):
 
+```bash
+VITE_API_URL=http://localhost:8080/api
+VITE_WS_URL=http://localhost:8080
 ```
-CORS_ALLOWED_ORIGINS = https://your-frontend-url.vercel.app,http://localhost:5173
+
+Create/update `application-dev.properties` (for local backend):
+```bash
+jwt.secret=your-development-jwt-secret-different-from-production
+jwt.expiration=86400000
+cors.allowed.origins=http://localhost:5173,http://localhost:5174,http://localhost:3000
 ```
 
 ### 3. Deployment Steps
@@ -49,24 +88,34 @@ CORS_ALLOWED_ORIGINS = https://your-frontend-url.vercel.app,http://localhost:517
 - Check API URL format: `https://domain.com/api` (no trailing slash)
 - Test backend endpoints directly
 
-## 📝 Example URLs
+## 📝 Example Configuration
 
-**Backend (Render.com):**
-```
-https://edma-backend.onrender.com
+### Render.com Environment Variables:
+```bash
+JWT_SECRET=9t9!*qg99BamwuvJ61JfpQgYXLXFjIN2mAYXvXPk2dFOIsOum58FKYjX7b*%#y86
+JWT_EXPIRATION=86400000
+CORS_ALLOWED_ORIGINS=https://edma-frontend.vercel.app,http://localhost:5173
+SPRING_PROFILES_ACTIVE=prod
+DATABASE_URL=postgresql://user:pass@host:5432/db
 ```
 
-**Frontend (Vercel):**
-```
-https://edma-frontend.vercel.app
-```
-
-**Environment Variables:**
-```
-# Vercel (Frontend)
+### Vercel Environment Variables:
+```bash
 VITE_API_URL=https://edma-backend.onrender.com/api
 VITE_WS_URL=https://edma-backend.onrender.com
-
-# Render (Backend)
-CORS_ALLOWED_ORIGINS=https://edma-frontend.vercel.app,http://localhost:5173
 ```
+
+## 🔐 Security Best Practices
+
+### JWT Secret Security:
+- **Never commit JWT secrets to Git**
+- **Use different secrets for dev/prod**
+- **Minimum 32 characters length**
+- **Include special characters**
+- **Regenerate periodically**
+
+### Environment Variable Security:
+- Store secrets only in platform environment variables
+- Use `.env.local` for local development (add to .gitignore)
+- Never use `.env` files in production
+- Rotate secrets regularly
