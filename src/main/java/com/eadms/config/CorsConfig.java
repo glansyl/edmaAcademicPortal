@@ -31,7 +31,16 @@ public class CorsConfig {
             }
         }
         
+        // Set allowed origins
         configuration.setAllowedOrigins(trimmedOrigins);
+        
+        // Also set allowed origin patterns for Vercel subdomains
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+            "https://*.vercel.app",
+            "http://localhost:*",
+            "https://localhost:*"
+        ));
+        
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
