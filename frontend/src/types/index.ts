@@ -165,3 +165,10 @@ export interface LoginResponse {
   userId: number
   message?: string
 }
+
+export interface UserUpdateRequest {
+  email?: string
+  password?: string
+}
+
+export * from './ticket'

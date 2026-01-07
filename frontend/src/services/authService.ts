@@ -33,4 +33,12 @@ export const authService = {
   setUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user))
   },
+
+  async updateStudentUser(studentId: number, data: { email?: string; newPassword?: string }): Promise<void> {
+    await api.put(`/admin/users/student/${studentId}`, data)
+  },
+
+  async updateTeacherUser(teacherId: number, data: { email?: string; newPassword?: string }): Promise<void> {
+    await api.put(`/admin/users/teacher/${teacherId}`, data)
+  },
 }
