@@ -223,7 +223,7 @@ class EADMSDataMigrator:
             ("hiro.tanaka@student.eu", "Hiro", "Tanaka", "AS008", "BSc-AS-3", "MALE", "+81-90-5544-8821"),
             ("siti.aminah@student.eu", "Siti", "Aminah", "AS009", "BSc-AS-1", "FEMALE", "+60-12-778-3321"),
             ("minh.nguyen@student.eu", "Minh", "Nguyen", "AS010", "BSc-AS-3", "MALE", "+84-91-223-8821"),
-            # Middle East & Africa
+            # Middle East 
             ("omar.hassan@student.eu", "Omar", "Hassan", "ME011", "BSc-AS-2", "MALE", "+20-109-882-991"),
             ("layla.nasser@student.eu", "Layla", "Nasser", "ME012", "BSc-AS-1", "FEMALE", "+971-50-881-9921"),
             ("youssef.benali@student.eu", "Youssef", "Ben Ali", "AF013", "BSc-AS-3", "MALE", "+216-22-881-009"),
