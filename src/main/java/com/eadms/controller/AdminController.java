@@ -4,6 +4,7 @@ import com.eadms.dto.request.CourseCreateRequest;
 import com.eadms.dto.request.StudentCreateRequest;
 import com.eadms.dto.request.StudentUpdateRequest;
 import com.eadms.dto.request.TeacherCreateRequest;
+import com.eadms.dto.request.UserUpdateRequest;
 import com.eadms.dto.response.*;
 import com.eadms.service.*;
 import com.eadms.util.ResponseUtil;
@@ -26,6 +27,7 @@ public class AdminController {
     private final TeacherService teacherService;
     private final CourseService courseService;
     private final ReportService reportService;
+    private final AuthService authService;
     
     @GetMapping("/dashboard/stats")
     public ResponseEntity<ApiResponse<Map<String, Object>>> getDashboardStats() {
@@ -161,5 +163,24 @@ public class AdminController {
     public ResponseEntity<ApiResponse<Void>> deleteCourse(@PathVariable Long id) {
         courseService.deleteCourse(id);
         return ResponseEntity.ok(ResponseUtil.success("Course deleted successfully", null));
+    }
+    
+    // User management endpoints (Admin only)
+    @PutMapping("/users/student/{studentId}")
+    public ResponseEntity<ApiResponse<Map<String, String>>> updateStudentUser(
+            @PathVariable Long studentId,
+            @Valid @RequestBody UserUpdateRequest request) {
+        authService.updateStudentUser(studentId, request);
+        return ResponseEntity.ok(ResponseUtil.success("Student user updated successfully", 
+            Map.of("message", "Email and/or password updated successfully")));
+    }
+    
+    @PutMapping("/users/teacher/{teacherId}")
+    public ResponseEntity<ApiResponse<Map<String, String>>> updateTeacherUser(
+            @PathVariable Long teacherId,
+            @Valid @RequestBody UserUpdateRequest request) {
+        authService.updateTeacherUser(teacherId, request);
+        return ResponseEntity.ok(ResponseUtil.success("Teacher user updated successfully", 
+            Map.of("message", "Email and/or password updated successfully")));
     }
 }

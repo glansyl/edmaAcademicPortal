@@ -8,6 +8,28 @@ import { Loading } from '@/components/ui/Loading'
 import toast from 'react-hot-toast'
 import { logger } from '@/lib/logger'
 
+// Helper functions defined outside component
+const getLetterGrade = (gpa: number) => {
+  if (gpa <= 0) return null
+  if (gpa >= 3.85) return 'A+'
+  if (gpa >= 3.7) return 'A'
+  if (gpa >= 3.5) return 'A-'
+  if (gpa >= 3.3) return 'B+'
+  if (gpa >= 3.0) return 'B'
+  if (gpa >= 2.7) return 'B-'
+  return 'C+'
+}
+
+const getAttendanceStatus = (percentage: number, hasAttendanceData: boolean) => {
+  if (!hasAttendanceData || percentage === 0) {
+    return { status: 'Not started', color: 'text-gray-600' }
+  }
+  if (percentage >= 90) return { status: 'Excellent', color: 'text-green-600' }
+  if (percentage >= 75) return { status: 'Good', color: 'text-green-600' }
+  if (percentage >= 60) return { status: 'Fair', color: 'text-yellow-600' }
+  return { status: 'Poor', color: 'text-red-600' }
+}
+
 export function StudentProfile() {
   const { user } = useAuth()
   const [profile, setProfile] = useState<Student | null>(null)
@@ -53,29 +75,6 @@ export function StudentProfile() {
   const hasAttendanceData = stats?.attendancePercentage !== undefined && stats?.attendancePercentage > 0
   const letterGrade = getLetterGrade(gpa)
   const attendanceInfo = getAttendanceStatus(attendancePercentage, hasAttendanceData)
-
-  const getLetterGrade = (gpa: number) => {
-    // 1️⃣ FIX: Only return letter grade if GPA > 0
-    if (gpa <= 0) return null
-    if (gpa >= 3.85) return 'A+'
-    if (gpa >= 3.7) return 'A'
-    if (gpa >= 3.5) return 'A-'
-    if (gpa >= 3.3) return 'B+'
-    if (gpa >= 3.0) return 'B'
-    if (gpa >= 2.7) return 'B-'
-    return 'C+'
-  }
-
-  const getAttendanceStatus = (percentage: number, hasAttendanceData: boolean) => {
-    // 2️⃣ FIX: Handle zero attendance properly
-    if (!hasAttendanceData || percentage === 0) {
-      return { status: 'Not started', color: 'text-gray-600' }
-    }
-    if (percentage >= 90) return { status: 'Excellent', color: 'text-green-600' }
-    if (percentage >= 75) return { status: 'Good', color: 'text-green-600' }
-    if (percentage >= 60) return { status: 'Fair', color: 'text-yellow-600' }
-    return { status: 'Poor', color: 'text-red-600' }
-  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">

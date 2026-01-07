@@ -1,11 +1,23 @@
 #!/usr/bin/env python3
 """
 Quick test to verify database connection and check existing tables
+
+SECURITY: Get DATABASE_URL from environment variable
+Usage: 
+    export DATABASE_URL="your-database-url"
+    python test_connection.py
 """
 
 import psycopg2
+import os
+import sys
 
-DATABASE_URL = "postgresql://glansyldsouza:90sdqXPOCt8vjts1erxYBSbciI0Xv2YN@dpg-d5e9bsh5pdvs73f7pkl0-a.oregon-postgres.render.com/edmadb"
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if not DATABASE_URL:
+    print("❌ Error: DATABASE_URL environment variable not set")
+    print("Usage: export DATABASE_URL='postgresql://user:pass@host:port/db'")
+    sys.exit(1)
 
 try:
     print("🔌 Connecting to database...")
@@ -54,7 +66,7 @@ try:
     cursor.close()
     conn.close()
     
-    print("\n✅ Database is ready for migration!")
+    print("\n✅ Database is ready!")
     
 except Exception as e:
     print(f"❌ Error: {e}")

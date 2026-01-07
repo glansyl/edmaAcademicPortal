@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { NavigationHelper } from './lib/navigation'
 import { LoginPage } from './pages/Login'
 import { AdminDashboard } from './pages/admin/AdminDashboard'
 import { StudentsList } from './pages/admin/StudentsList'
@@ -41,9 +42,7 @@ function AppRoutes() {
       
       <Route path="/" element={
         user ? (
-          user.role === 'ADMIN' ? <Navigate to="/admin" /> :
-          user.role === 'TEACHER' ? <Navigate to="/teacher" /> :
-          <Navigate to="/student" />
+          <Navigate to={NavigationHelper.getDashboardRoute(user.role)} replace />
         ) : <Navigate to="/login" />
       } />
 

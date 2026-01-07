@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/Button'
+import { NavigationHelper } from '@/lib/navigation'
 import { 
   Home, 
   User, 
@@ -79,15 +80,18 @@ export function Sidebar() {
     <div className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 flex flex-col shadow-sm">
       {/* Header */}
       <div className="px-6 pt-8 pb-6 border-b border-gray-100">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-md">
+        <Link 
+          to={NavigationHelper.getDashboardRoute(user?.role)}
+          className="flex items-center gap-3 mb-2 group transition-all duration-200 hover:scale-105"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
             <GraduationCap className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-gray-900 leading-tight">Academic</h1>
+            <h1 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">Academic</h1>
             <h1 className="text-lg font-bold text-blue-600 leading-tight">Portal</h1>
           </div>
-        </div>
+        </Link>
         <p className="text-xs text-gray-500 tracking-wide uppercase font-semibold ml-13">Control System</p>
       </div>
 

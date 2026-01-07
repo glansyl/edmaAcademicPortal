@@ -11,6 +11,8 @@ Usage:
 Or set DATABASE_URL environment variable:
     export DATABASE_URL="postgresql://user:pass@host:port/db"
     python migrate_data.py
+
+SECURITY NOTE: Never commit database credentials to version control!
 """
 
 import os

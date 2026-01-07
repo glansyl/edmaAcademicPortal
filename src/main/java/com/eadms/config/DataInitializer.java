@@ -53,7 +53,7 @@ public class DataInitializer {
             userRepository.save(adminUser);
             log.info("✅ Default admin user created successfully!");
             log.info("📧 Admin Login: {} / {}", adminEmail, adminPassword);
-            log.info("ℹ️  Use the admin panel to add teachers, students, and courses.");
+            log.info("ℹ️  Use the Python migration script to add teachers, students, and courses.");
         };
     }
 }

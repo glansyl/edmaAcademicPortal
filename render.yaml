@@ -17,5 +17,5 @@ services:
 databases:
   # PostgreSQL Database
   - name: edma-db
-    databaseName: eadmsdb
-    user: aman
+    databaseName: edmadb
+    user: glansyldsouza

@@ -82,4 +82,46 @@ public class AuthServiceImpl implements AuthService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
+    
+    @Override
+    @Transactional
+    public void updateStudentUser(Long studentId, com.eadms.dto.request.UserUpdateRequest request) {
+        // Implementation for updating student user
+        User user = userRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student user not found"));
+        
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new BadRequestException("Email already exists");
+            }
+            user.setEmail(request.getEmail());
+        }
+        
+        if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+        
+        userRepository.save(user);
+    }
+    
+    @Override
+    @Transactional
+    public void updateTeacherUser(Long teacherId, com.eadms.dto.request.UserUpdateRequest request) {
+        // Implementation for updating teacher user
+        User user = userRepository.findById(teacherId)
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher user not found"));
+        
+        if (request.getEmail() != null && !request.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(request.getEmail())) {
+                throw new BadRequestException("Email already exists");
+            }
+            user.setEmail(request.getEmail());
+        }
+        
+        if (request.getNewPassword() != null && !request.getNewPassword().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        }
+        
+        userRepository.save(user);
+    }
 }
