@@ -14,7 +14,7 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
     
-    @Value("${cors.allowed.origins:http://localhost:5173,http://localhost:5174,http://localhost:3000,https://*.vercel.app}")
+    @Value("${cors.allowed.origins:http://localhost:5173,http://localhost:5174,http://localhost:3000,https://edma-three.vercel.app}")
     private String allowedOrigins;
     
     @Bean
@@ -37,6 +37,7 @@ public class CorsConfig {
         // Also set allowed origin patterns for Vercel subdomains
         configuration.setAllowedOriginPatterns(Arrays.asList(
             "https://*.vercel.app",
+            "https://edma-three.vercel.app",
             "http://localhost:*",
             "https://localhost:*"
         ));
