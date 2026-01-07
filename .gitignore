@@ -55,7 +55,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -64,6 +63,10 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+# Python lib directories only (not frontend/src/lib)
+/lib/
+scripts/lib/
 
 # Node
 node_modules/
