@@ -6,7 +6,6 @@
 -- =====================================================
 
 -- Drop tables if they exist (for clean setup)
-DROP TABLE IF EXISTS messages CASCADE;
 DROP TABLE IF EXISTS attendance CASCADE;
 DROP TABLE IF EXISTS marks CASCADE;
 DROP TABLE IF EXISTS courses CASCADE;
@@ -152,29 +151,6 @@ CREATE INDEX idx_attendance_date ON attendance(attendance_date);
 CREATE INDEX idx_attendance_status ON attendance(status);
 
 -- =====================================================
--- Table: messages
--- Description: Internal messaging system
--- =====================================================
-CREATE TABLE messages (
-    id BIGSERIAL PRIMARY KEY,
-    sender_id BIGINT NOT NULL,
-    receiver_id BIGINT NOT NULL,
-    subject VARCHAR(200) NOT NULL,
-    content TEXT NOT NULL,
-    is_read BOOLEAN NOT NULL DEFAULT FALSE,
-    sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    read_at TIMESTAMP,
-    CONSTRAINT fk_message_sender FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_message_receiver FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
--- Indexes for faster message queries
-CREATE INDEX idx_messages_sender_id ON messages(sender_id);
-CREATE INDEX idx_messages_receiver_id ON messages(receiver_id);
-CREATE INDEX idx_messages_sent_at ON messages(sent_at DESC);
-CREATE INDEX idx_messages_is_read ON messages(is_read);
-
--- =====================================================
 -- Comments for documentation
 -- =====================================================
 COMMENT ON TABLE users IS 'Core user authentication and authorization table';
@@ -183,7 +159,6 @@ COMMENT ON TABLE teachers IS 'Teacher profile and department information';
 COMMENT ON TABLE courses IS 'Course catalog and assignments';
 COMMENT ON TABLE marks IS 'Student examination marks and grades';
 COMMENT ON TABLE attendance IS 'Daily attendance tracking for students';
-COMMENT ON TABLE messages IS 'Internal messaging system between users';
 
 -- =====================================================
 -- End of Migration

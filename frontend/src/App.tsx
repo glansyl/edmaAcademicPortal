@@ -13,14 +13,12 @@ import { EnrollmentManagement } from './pages/admin/EnrollmentManagement'
 import { NoticeManagement } from './pages/admin/NoticeManagement'
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard'
 import { TeacherProfile } from './pages/teacher/TeacherProfile'
-import { TeacherMessages } from './pages/teacher/TeacherMessages'
 import TeacherSchedule from './pages/teacher/TeacherSchedule'
 import { MyCourses } from './pages/teacher/MyCourses'
 import { TeacherMarks } from './pages/teacher/TeacherMarks'
 import { TeacherAttendance } from './pages/teacher/TeacherAttendance'
 import { StudentDashboard } from './pages/student/StudentDashboard'
 import { StudentProfile } from './pages/student/StudentProfile'
-import { StudentMessages } from './pages/student/StudentMessages'
 import { StudentMarks } from './pages/student/StudentMarks'
 import { StudentAttendance } from './pages/student/StudentAttendance'
 import { StudentCourses } from './pages/student/StudentCourses'
@@ -56,7 +54,6 @@ function AppRoutes() {
 
       <Route path="/teacher" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherDashboard /></ProtectedRoute>} />
       <Route path="/teacher/profile" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherProfile /></ProtectedRoute>} />
-      <Route path="/teacher/messages" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherMessages /></ProtectedRoute>} />
       <Route path="/teacher/courses" element={<ProtectedRoute allowedRoles={['TEACHER']}><MyCourses /></ProtectedRoute>} />
       <Route path="/teacher/schedule" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherSchedule /></ProtectedRoute>} />
       <Route path="/teacher/marks" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherMarks /></ProtectedRoute>} />
@@ -64,7 +61,6 @@ function AppRoutes() {
 
       <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentDashboard /></ProtectedRoute>} />
       <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentProfile /></ProtectedRoute>} />
-      <Route path="/student/messages" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentMessages /></ProtectedRoute>} />
       <Route path="/student/courses" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentCourses /></ProtectedRoute>} />
       <Route path="/student/schedule" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentSchedule /></ProtectedRoute>} />
       <Route path="/student/marks" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentMarks /></ProtectedRoute>} />

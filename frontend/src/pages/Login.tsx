@@ -68,12 +68,7 @@ export function LoginPage() {
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="relative z-10 mt-16">
-              <p className="text-blue-200/80 text-sm">
-                © 2024 Academic Portal. All rights reserved.
-              </p>
-            </div>
+
           </div>
 
           {/* Right Panel - Clean and modern form */}

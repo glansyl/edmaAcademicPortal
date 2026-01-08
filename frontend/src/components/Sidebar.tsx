@@ -5,7 +5,6 @@ import { NavigationHelper } from '@/lib/navigation'
 import { 
   Home, 
   User, 
-  MessageSquare, 
   BookOpen, 
   Calendar,
   LogOut,
@@ -27,7 +26,6 @@ export function Sidebar() {
       return [
         { to: '/teacher', label: 'Dashboard', icon: Home },
         { to: '/teacher/profile', label: 'Profile', icon: User },
-        { to: '/teacher/messages', label: 'Messages', icon: MessageSquare },
         { to: '/teacher/courses', label: 'Courses', icon: BookOpen },
         { to: '/teacher/schedule', label: 'Schedule', icon: Calendar },
         { to: '/teacher/attendance', label: 'Attendance', icon: ClipboardCheck },
@@ -38,7 +36,6 @@ export function Sidebar() {
       return [
         { to: '/student', label: 'Dashboard', icon: Home },
         { to: '/student/profile', label: 'Profile', icon: User },
-        { to: '/student/messages', label: 'Messages', icon: MessageSquare },
         { to: '/student/courses', label: 'My Courses', icon: BookOpen },
         { to: '/student/schedule', label: 'Schedule', icon: Calendar },
         { to: '/student/marks', label: 'My Marks', icon: GraduationCap },
