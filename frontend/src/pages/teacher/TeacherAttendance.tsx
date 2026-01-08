@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/Button'
 import { teacherService } from '@/services/teacherService'
 import { attendanceService } from '@/services/attendanceService'
 import { Course, Student, Attendance } from '@/types'
-import { Users, Calendar, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react'
+import { Users, Calendar, CheckCircle, XCircle, Clock, AlertCircle, Download } from 'lucide-react'
 import { logger } from '@/lib/logger'
 import toast from 'react-hot-toast'
+import { generateAttendancePdfFromStudents } from '@/utils/attendancePdfGenerator'
 
 export function TeacherAttendance() {
   const [courses, setCourses] = useState<Course[]>([])
@@ -18,10 +19,13 @@ export function TeacherAttendance() {
   const [existingAttendance, setExistingAttendance] = useState<Attendance[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false)
   const [viewMode, setViewMode] = useState<'mark' | 'view'>('mark')
+  const [teacherName, setTeacherName] = useState<string>('')
 
   useEffect(() => {
     loadCourses()
+    loadTeacherProfile()
   }, [])
 
   useEffect(() => {
@@ -50,6 +54,15 @@ export function TeacherAttendance() {
     } catch (error) {
       logger.error('Failed to load courses:', error)
       toast.error('Failed to load courses')
+    }
+  }
+
+  const loadTeacherProfile = async () => {
+    try {
+      const profile = await teacherService.getMyProfile()
+      setTeacherName(`${profile.firstName} ${profile.lastName}`)
+    } catch (error) {
+      logger.error('Failed to load teacher profile:', error)
     }
   }
 
@@ -147,6 +160,35 @@ export function TeacherAttendance() {
       toast.error('Failed to save attendance')
     } finally {
       setIsSaving(false)
+    }
+  }
+
+  const handleDownloadPdf = async () => {
+    if (!selectedCourse) {
+      toast.error('Please select a course')
+      return
+    }
+
+    if (students.length === 0) {
+      toast.error('No attendance data to download')
+      return
+    }
+
+    setIsGeneratingPdf(true)
+    try {
+      generateAttendancePdfFromStudents(
+        students,
+        attendanceRecords,
+        selectedCourse,
+        attendanceDate,
+        teacherName
+      )
+      toast.success('PDF downloaded successfully')
+    } catch (error) {
+      logger.error('Failed to generate PDF:', error)
+      toast.error('Failed to generate PDF. Please try again.')
+    } finally {
+      setIsGeneratingPdf(false)
     }
   }
 
@@ -342,6 +384,24 @@ export function TeacherAttendance() {
                 </div>
 
                 <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex justify-end gap-3">
+                  <Button
+                    onClick={handleDownloadPdf}
+                    disabled={isGeneratingPdf || !selectedCourse || students.length === 0}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    {isGeneratingPdf ? (
+                      <>
+                        <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-600 border-t-transparent" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4" />
+                        Download Attendance (PDF)
+                      </>
+                    )}
+                  </Button>
                   <Button
                     onClick={handleSaveAttendance}
                     disabled={isSaving || students.length === 0}

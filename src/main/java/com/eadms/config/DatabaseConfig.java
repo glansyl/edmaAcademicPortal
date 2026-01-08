@@ -54,11 +54,23 @@ public class DatabaseConfig {
                 
                 // Fix: Preserve query parameters (essential for SSL configuration like ?sslmode=require)
                 String query = dbUri.getRawQuery();
-                String jdbcUrl = String.format("jdbc:postgresql://%s:%d%s%s", 
-                    host, 
-                    port, 
-                    path,
-                    (query != null && !query.isEmpty()) ? "?" + query : "");
+                
+                // Render PostgreSQL requires SSL - ensure sslmode is set
+                String jdbcUrl;
+                if (query != null && !query.isEmpty()) {
+                    // Query parameters exist - check if sslmode is already set
+                    if (!query.contains("sslmode")) {
+                        jdbcUrl = String.format("jdbc:postgresql://%s:%d%s?%s&sslmode=require", 
+                            host, port, path, query);
+                    } else {
+                        jdbcUrl = String.format("jdbc:postgresql://%s:%d%s?%s", 
+                            host, port, path, query);
+                    }
+                } else {
+                    // No query parameters - add sslmode=require for Render compatibility
+                    jdbcUrl = String.format("jdbc:postgresql://%s:%d%s?sslmode=require", 
+                        host, port, path);
+                }
                 
                 log.info("Connecting to database: {} with user: {}", jdbcUrl, username);
                 
