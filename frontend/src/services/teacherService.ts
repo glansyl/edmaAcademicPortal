@@ -1,5 +1,5 @@
 import api from './api'
-import { Teacher, Course, DashboardStats, Student } from '@/types'
+import { Teacher, Course, DashboardStats, Student, Marks, Attendance } from '@/types'
 
 export const teacherService = {
   async getAllTeachers(): Promise<Teacher[]> {
@@ -48,6 +48,16 @@ export const teacherService = {
 
   async getMyProfile(): Promise<Teacher> {
     const response = await api.get<Teacher>('/teacher/profile')
+    return response.data
+  },
+
+  async getMarksByCourse(courseId: number): Promise<Marks[]> {
+    const response = await api.get<Marks[]>(`/teacher/marks/course/${courseId}`)
+    return response.data
+  },
+
+  async getAttendanceByCourse(courseId: number): Promise<Attendance[]> {
+    const response = await api.get<Attendance[]>(`/teacher/attendance/course/${courseId}`)
     return response.data
   },
 }

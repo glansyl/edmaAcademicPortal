@@ -1,3 +1,4 @@
+
 /**
  * Professional Report Card PDF Generator
  * Creates academic-quality PDF report cards using jsPDF and jspdf-autotable

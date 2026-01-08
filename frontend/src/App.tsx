@@ -17,6 +17,7 @@ import TeacherSchedule from './pages/teacher/TeacherSchedule'
 import { MyCourses } from './pages/teacher/MyCourses'
 import { TeacherMarks } from './pages/teacher/TeacherMarks'
 import { TeacherAttendance } from './pages/teacher/TeacherAttendance'
+import { StudentDetail } from './pages/teacher/StudentDetail'
 import { StudentDashboard } from './pages/student/StudentDashboard'
 import { StudentProfile } from './pages/student/StudentProfile'
 import { StudentMarks } from './pages/student/StudentMarks'
@@ -58,6 +59,7 @@ function AppRoutes() {
       <Route path="/teacher/schedule" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherSchedule /></ProtectedRoute>} />
       <Route path="/teacher/marks" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherMarks /></ProtectedRoute>} />
       <Route path="/teacher/attendance" element={<ProtectedRoute allowedRoles={['TEACHER']}><TeacherAttendance /></ProtectedRoute>} />
+      <Route path="/teacher/students/:studentId" element={<ProtectedRoute allowedRoles={['TEACHER']}><StudentDetail /></ProtectedRoute>} />
 
       <Route path="/student" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentDashboard /></ProtectedRoute>} />
       <Route path="/student/profile" element={<ProtectedRoute allowedRoles={['STUDENT']}><StudentProfile /></ProtectedRoute>} />
