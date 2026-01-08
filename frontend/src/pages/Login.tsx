@@ -141,15 +141,6 @@ export function LoginPage() {
                     Sign In
                   </Button>
                 </div>
-
-                <div className="text-center pt-2">
-                  <button
-                    type="button"
-                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors duration-200"
-                  >
-                    Need help accessing your account?
-                  </button>
-                </div>
               </form>
             </div>
           </div>

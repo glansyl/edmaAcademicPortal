@@ -1,12 +1,12 @@
 # Efficient Academic Data Management System (EADMS)
 
-A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, notice board system, and a polished professional UI.
+A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, notice board system, PDF report generation, and a polished professional UI.
 
 ## 🎯 Project Overview
 
-EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records, and system-wide notices.
+EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records, and system-wide notices with professional PDF report generation capabilities.
 
-**✅ Latest Update (Jan 2026)**: Repository cleaned and optimized for production. Messaging system removed, documentation organized, and codebase streamlined for academic submission. System is production-ready with comprehensive validation.
+**✅ Latest Update (Jan 2026)**: Added Student Report Card PDF Download feature with professional academic formatting. Repository cleaned and optimized for production. Support ticket system removed to streamline the application. System is production-ready with comprehensive validation and PDF generation capabilities.
 
 ### Key Features
 
@@ -14,6 +14,7 @@ EADMS is a comprehensive web-based platform for managing academic data in educat
 - **JWT Authentication**: Secure token-based authentication with 24-hour expiration
 - **Notice Board System**: System-wide announcements with priority levels and target audiences
 - **Academic Management**: Complete student, teacher, course, marks, and attendance management
+- **PDF Report Generation**: Professional student report cards and attendance reports
 - **RESTful API**: Well-structured REST APIs following best practices
 - **Professional UI**: Modern, responsive design with Tailwind CSS and Shadcn/ui
 - **Data Visualization**: Interactive charts and graphs for academic analytics
@@ -99,7 +100,6 @@ eadms/
 │   │   ├── Marks.java
 │   │   ├── Attendance.java
 │   │   ├── Notice.java
-│   │   ├── Ticket.java
 │   │   └── BaseEntity.java
 │   ├── repository/
 │   │   ├── UserRepository.java
@@ -108,8 +108,7 @@ eadms/
 │   │   ├── CourseRepository.java
 │   │   ├── MarksRepository.java
 │   │   ├── AttendanceRepository.java
-│   │   ├── NoticeRepository.java
-│   │   └── TicketRepository.java
+│   │   └── NoticeRepository.java
 │   ├── service/
 │   │   ├── AuthService.java & Impl
 │   │   ├── StudentService.java & Impl
@@ -118,7 +117,6 @@ eadms/
 │   │   ├── MarksService.java & Impl
 │   │   ├── AttendanceService.java & Impl
 │   │   ├── NoticeService.java & Impl
-│   │   ├── TicketService.java & Impl
 │   │   └── ReportService.java & Impl
 │   ├── controller/
 │   │   ├── AuthController.java
@@ -126,7 +124,6 @@ eadms/
 │   │   ├── TeacherController.java
 │   │   ├── StudentController.java
 │   │   ├── NoticeController.java
-│   │   ├── TicketController.java
 │   │   └── ReportController.java
 │   ├── dto/
 │   │   ├── request/ (LoginRequest, Create/Update DTOs)
@@ -267,10 +264,6 @@ eadms/
    - Fields: title, content, priority (HIGH/MEDIUM/LOW), targetAudience (ALL/STUDENTS/TEACHERS)
    - Relationships: ManyToOne with User (creator)
 
-8. **Ticket** - Support ticket system
-   - Fields: subject, description, status (OPEN/IN_PROGRESS/RESOLVED/CLOSED), category
-   - Relationships: ManyToOne with User (creator)
-
 ## 🔐 API Endpoints
 
 ### Authentication (`/api/auth`)
@@ -329,11 +322,6 @@ eadms/
 ### Notices (`/api/notices`) - All authenticated users
 - `GET /notices` - Get notices for current user's role
 - `GET /notices/{id}` - Get specific notice
-
-### Tickets (`/api/tickets`) - All authenticated users
-- `POST /tickets` - Create support ticket
-- `GET /tickets` - Get user's tickets
-- `PUT /tickets/{id}` - Update ticket (admin/creator only)
 
 ## 🧪 Testing
 

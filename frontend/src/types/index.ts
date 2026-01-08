@@ -170,5 +170,3 @@ export interface UserUpdateRequest {
   email?: string
   password?: string
 }
-
-export * from './ticket'

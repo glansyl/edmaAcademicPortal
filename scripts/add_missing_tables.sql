@@ -58,36 +58,7 @@ CREATE INDEX IF NOT EXISTS idx_notices_created_by ON notices(created_by);
 CREATE INDEX IF NOT EXISTS idx_notices_created_at ON notices(created_at DESC);
 
 -- =====================================================
--- Table: tickets
--- Description: Support ticket system
--- =====================================================
-CREATE TABLE IF NOT EXISTS tickets (
-    id BIGSERIAL PRIMARY KEY,
-    subject VARCHAR(200) NOT NULL,
-    description TEXT NOT NULL,
-    status VARCHAR(20) NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED')),
-    category VARCHAR(50) NOT NULL CHECK (category IN ('TECHNICAL', 'ACADEMIC', 'ADMINISTRATIVE', 'OTHER')),
-    priority VARCHAR(10) NOT NULL DEFAULT 'MEDIUM' CHECK (priority IN ('HIGH', 'MEDIUM', 'LOW')),
-    created_by BIGINT NOT NULL,
-    assigned_to BIGINT,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    resolved_at TIMESTAMP,
-    CONSTRAINT fk_ticket_creator FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
-    CONSTRAINT fk_ticket_assignee FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL
-);
-
--- Indexes for faster queries
-CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status);
-CREATE INDEX IF NOT EXISTS idx_tickets_category ON tickets(category);
-CREATE INDEX IF NOT EXISTS idx_tickets_priority ON tickets(priority);
-CREATE INDEX IF NOT EXISTS idx_tickets_created_by ON tickets(created_by);
-CREATE INDEX IF NOT EXISTS idx_tickets_assigned_to ON tickets(assigned_to);
-CREATE INDEX IF NOT EXISTS idx_tickets_created_at ON tickets(created_at DESC);
-
--- =====================================================
 -- Comments for documentation
 -- =====================================================
 COMMENT ON TABLE enrollments IS 'Student course enrollments and academic progress';
 COMMENT ON TABLE notices IS 'System-wide announcements and notices';
-COMMENT ON TABLE tickets IS 'Support ticket system for user issues';
