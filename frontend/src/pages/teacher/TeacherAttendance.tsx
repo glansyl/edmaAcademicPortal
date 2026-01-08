@@ -236,7 +236,7 @@ export function TeacherAttendance() {
         <div className="mb-6 flex gap-2">
           <Button
             onClick={() => setViewMode('mark')}
-            variant={viewMode === 'mark' ? 'default' : 'outline'}
+            variant={viewMode === 'mark' ? 'primary' : 'outline'}
             className="flex items-center gap-2"
           >
             <CheckCircle className="h-4 w-4" />
@@ -244,7 +244,7 @@ export function TeacherAttendance() {
           </Button>
           <Button
             onClick={() => setViewMode('view')}
-            variant={viewMode === 'view' ? 'default' : 'outline'}
+            variant={viewMode === 'view' ? 'primary' : 'outline'}
             className="flex items-center gap-2"
           >
             <Calendar className="h-4 w-4" />
@@ -466,10 +466,10 @@ export function TeacherAttendance() {
                           {new Date(record.attendanceDate).toLocaleDateString()}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {record.student?.studentId}
+                          {record.studentId}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          {record.student?.firstName} {record.student?.lastName}
+                          {record.studentName}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(record.status)}`}>

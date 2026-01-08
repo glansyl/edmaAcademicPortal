@@ -36,16 +36,20 @@ public class AttendanceServiceImpl implements AttendanceService {
                 request.getStudentId(), request.getCourseId(), request.getAttendanceDate()
         );
         
+        Attendance attendance;
         if (existing.isPresent()) {
-            throw new BadRequestException("Attendance already marked for this date");
+            // Update existing attendance
+            attendance = existing.get();
+            attendance.setStatus(Attendance.Status.valueOf(request.getStatus().toUpperCase()));
+        } else {
+            // Create new attendance
+            attendance = Attendance.builder()
+                    .student(student)
+                    .course(course)
+                    .attendanceDate(request.getAttendanceDate())
+                    .status(Attendance.Status.valueOf(request.getStatus().toUpperCase()))
+                    .build();
         }
-        
-        Attendance attendance = Attendance.builder()
-                .student(student)
-                .course(course)
-                .attendanceDate(request.getAttendanceDate())
-                .status(Attendance.Status.valueOf(request.getStatus().toUpperCase()))
-                .build();
         
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return mapToResponse(savedAttendance);

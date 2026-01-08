@@ -12,6 +12,12 @@ services:
         fromDatabase:
           name: edma-db
           property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRATION
+        value: "86400000"
+      - key: CORS_ALLOWED_ORIGINS
+        value: "https://edmaacademicportal.onrender.com"
     healthCheckPath: /actuator/health
 
 databases:
