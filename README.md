@@ -1,17 +1,19 @@
 # Efficient Academic Data Management System (EADMS)
 
-A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, and a polished professional UI.
+A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, notice board system, and a polished professional UI.
 
 ## 🎯 Project Overview
 
-EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, and attendance records.
+EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records, and system-wide notices.
 
-**✅ Latest Update (Jan 2026)**: Level-2 API QA Audit completed. All contract violations, error handling issues, and edge cases resolved. System is production-ready with comprehensive validation.
+**✅ Latest Update (Jan 2026)**: Repository cleaned and optimized for production. Messaging system removed, documentation organized, and codebase streamlined for academic submission. System is production-ready with comprehensive validation.
 
 ### Key Features
 
 - **Role-Based Access Control**: Three distinct user roles with specific permissions
-- **JWT Authentication**: Secure token-based authentication
+- **JWT Authentication**: Secure token-based authentication with 24-hour expiration
+- **Notice Board System**: System-wide announcements with priority levels and target audiences
+- **Academic Management**: Complete student, teacher, course, marks, and attendance management
 - **RESTful API**: Well-structured REST APIs following best practices
 - **Professional UI**: Modern, responsive design with Tailwind CSS and Shadcn/ui
 - **Data Visualization**: Interactive charts and graphs for academic analytics
@@ -56,15 +58,39 @@ EADMS is a comprehensive web-based platform for managing academic data in educat
 ## 📁 Project Structure
 
 ```
-edma/
-├── src/main/java/com/eadms/
+eadms/
+├── docs/                           # Documentation
+│   ├── API_TESTING_GUIDE.md
+│   ├── DATABASE_SETUP.md
+│   ├── DEPLOYMENT.md
+│   ├── ENV_VARS.md
+│   ├── QA_VERIFICATION_REPORT.md
+│   ├── RENDER_SETUP.md
+│   ├── VERCEL_SETUP.md
+│   └── WEBSOCKET_IMPLEMENTATION.md
+├── frontend/                       # React TypeScript Frontend
+│   ├── src/
+│   │   ├── components/            # Reusable UI components
+│   │   ├── pages/                 # Page components
+│   │   │   ├── admin/            # Admin dashboard & management
+│   │   │   ├── student/          # Student dashboard & views
+│   │   │   └── teacher/          # Teacher dashboard & tools
+│   │   ├── services/             # API service layer
+│   │   ├── contexts/             # React contexts (Auth, etc.)
+│   │   ├── types/                # TypeScript type definitions
+│   │   └── lib/                  # Utilities and helpers
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── tailwind.config.js
+├── src/main/java/com/eadms/       # Spring Boot Backend
 │   ├── EadmsApplication.java
 │   ├── config/
 │   │   ├── SecurityConfig.java
 │   │   ├── JwtAuthenticationFilter.java
 │   │   ├── JwtTokenProvider.java
 │   │   ├── CorsConfig.java
-│   │   └── ModelMapperConfig.java
+│   │   ├── WebSocketConfig.java
+│   │   └── DataInitializer.java
 │   ├── entity/
 │   │   ├── User.java
 │   │   ├── Student.java
@@ -72,6 +98,8 @@ edma/
 │   │   ├── Course.java
 │   │   ├── Marks.java
 │   │   ├── Attendance.java
+│   │   ├── Notice.java
+│   │   ├── Ticket.java
 │   │   └── BaseEntity.java
 │   ├── repository/
 │   │   ├── UserRepository.java
@@ -79,7 +107,9 @@ edma/
 │   │   ├── TeacherRepository.java
 │   │   ├── CourseRepository.java
 │   │   ├── MarksRepository.java
-│   │   └── AttendanceRepository.java
+│   │   ├── AttendanceRepository.java
+│   │   ├── NoticeRepository.java
+│   │   └── TicketRepository.java
 │   ├── service/
 │   │   ├── AuthService.java & Impl
 │   │   ├── StudentService.java & Impl
@@ -87,12 +117,16 @@ edma/
 │   │   ├── CourseService.java & Impl
 │   │   ├── MarksService.java & Impl
 │   │   ├── AttendanceService.java & Impl
+│   │   ├── NoticeService.java & Impl
+│   │   ├── TicketService.java & Impl
 │   │   └── ReportService.java & Impl
 │   ├── controller/
 │   │   ├── AuthController.java
 │   │   ├── AdminController.java
 │   │   ├── TeacherController.java
 │   │   ├── StudentController.java
+│   │   ├── NoticeController.java
+│   │   ├── TicketController.java
 │   │   └── ReportController.java
 │   ├── dto/
 │   │   ├── request/ (LoginRequest, Create/Update DTOs)
@@ -106,8 +140,17 @@ edma/
 ├── src/main/resources/
 │   ├── application.properties
 │   ├── application-dev.properties
-│   └── application-prod.properties
-└── frontend/ (React application - to be generated)
+│   ├── application-prod.properties
+│   └── db/migration/
+│       └── V1__initial_schema.sql
+├── scripts/                        # Utility scripts
+│   ├── migrate_data.py
+│   ├── verify_backend.py
+│   └── requirements.txt
+├── pom.xml                        # Maven configuration
+├── Dockerfile                     # Docker configuration
+├── render.yaml                    # Render deployment config
+└── vercel.json                    # Vercel deployment config
 ```
 
 ## 🚀 Getting Started
@@ -150,20 +193,47 @@ edma/
 4. **Run the application**
    ```bash
    # Development mode (H2 database)
-   mvn spring-boot:run
+   mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
    
    # Production mode (PostgreSQL)
-   mvn spring-boot:run -Dspring-boot.run.profiles=prod
+   mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=prod"
    ```
 
 5. **Access the application**
    - Backend API: `http://localhost:8080`
    - H2 Console: `http://localhost:8080/h2-console` (dev only)
-   - Swagger/API Docs: `http://localhost:8080/swagger-ui.html`
+   - API Health Check: `http://localhost:8080/`
 
-### Frontend Setup (Coming Soon)
+### Frontend Setup
 
-The React frontend will be generated separately. Instructions will be provided in a separate `frontend/README.md` file.
+1. **Navigate to frontend directory**
+   ```bash
+   cd frontend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment**
+   ```bash
+   # Copy environment file
+   cp .env.example .env
+   
+   # Update .env with your backend URL
+   VITE_API_URL=http://localhost:8080/api
+   VITE_WS_URL=http://localhost:8080
+   ```
+
+4. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Access frontend**
+   - Frontend: `http://localhost:5173` (or next available port)
+   - Login with default admin credentials (see below)
 
 ## 📊 Database Schema
 
@@ -193,6 +263,14 @@ The React frontend will be generated separately. Instructions will be provided i
    - Fields: attendanceDate, status (PRESENT/ABSENT/LATE/EXCUSED)
    - Relationships: ManyToOne with Student and Course
 
+7. **Notice** - System-wide announcements
+   - Fields: title, content, priority (HIGH/MEDIUM/LOW), targetAudience (ALL/STUDENTS/TEACHERS)
+   - Relationships: ManyToOne with User (creator)
+
+8. **Ticket** - Support ticket system
+   - Fields: subject, description, status (OPEN/IN_PROGRESS/RESOLVED/CLOSED), category
+   - Relationships: ManyToOne with User (creator)
+
 ## 🔐 API Endpoints
 
 ### Authentication (`/api/auth`)
@@ -220,6 +298,12 @@ The React frontend will be generated separately. Instructions will be provided i
   - `PUT /courses/{courseId}/assign-teacher/{teacherId}` - Assign teacher
   - `DELETE /courses/{id}` - Delete course
 
+- **Notices**
+  - `POST /notices` - Create notice
+  - `GET /notices` - Get all notices
+  - `PUT /notices/{id}` - Update notice
+  - `DELETE /notices/{id}` - Delete notice
+
 - **Dashboard**
   - `GET /dashboard/stats` - Get admin dashboard statistics
 
@@ -241,6 +325,15 @@ The React frontend will be generated separately. Instructions will be provided i
 - `GET /attendance` - Get student attendance
 - `GET /attendance/stats` - Get attendance statistics
 - `GET /gpa` - Get student GPA
+
+### Notices (`/api/notices`) - All authenticated users
+- `GET /notices` - Get notices for current user's role
+- `GET /notices/{id}` - Get specific notice
+
+### Tickets (`/api/tickets`) - All authenticated users
+- `POST /tickets` - Create support ticket
+- `GET /tickets` - Get user's tickets
+- `PUT /tickets/{id}` - Update ticket (admin/creator only)
 
 ## 🧪 Testing
 
@@ -312,19 +405,13 @@ configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localho
 
 ## 📝 Default Credentials
 
-After running the application with sample data initialization:
+After running the application, the system automatically creates a default admin user:
 
 ### Admin
 - Email: `admin@eadms.com`
-- Password: `admin123`
+- Password: `Admin@123`
 
-### Teacher
-- Email: `teacher1@eadms.com`
-- Password: `teacher123`
-
-### Student
-- Email: `student1@eadms.com`
-- Password: `student123`
+**Note**: Additional users (teachers and students) can be created through the admin panel or by running the data migration script in the `scripts/` directory.
 
 ## 🎨 UI/UX Design Principles
 
@@ -346,8 +433,14 @@ mvn spring-boot:run
 
 ### Production Build
 ```bash
-mvn clean package -Pprod
-java -jar target/eadms-1.0.0.jar
+# Backend
+mvn clean package -DskipTests
+java -jar target/eadms-1.0.0.jar --spring.profiles.active=prod
+
+# Frontend
+cd frontend
+npm run build
+# Serve dist/ folder with your preferred web server
 ```
 
 ### Docker Deployment
@@ -382,10 +475,22 @@ This project is licensed under the MIT License.
 - Tailwind CSS
 - Shadcn/ui Component Library
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the `docs/` directory:
+
+- **API_TESTING_GUIDE.md** - Complete API testing instructions
+- **DATABASE_SETUP.md** - Database configuration and schema details
+- **DEPLOYMENT.md** - Production deployment guide
+- **ENV_VARS.md** - Environment variables configuration
+- **QA_VERIFICATION_REPORT.md** - Quality assurance test results
+- **RENDER_SETUP.md** - Render.com deployment instructions
+- **VERCEL_SETUP.md** - Vercel deployment instructions
+
 ## 📞 Support
 
-For support, email glansyl.dsouzaa@gmail.com or open an issue in the repository.
+For support, open an issue in the repository or refer to the documentation in the `docs/` directory.
 
 ---
 
-**Note**: This is an academic project demonstrating best practices in full-stack development, including layered architecture, SOLID principles, and modern UI/UX design.
+**Note**: This is an academic project demonstrating best practices in full-stack development, including layered architecture, SOLID principles, modern UI/UX design, and production-ready deployment configurations.

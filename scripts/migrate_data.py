@@ -146,20 +146,19 @@ class EADMSDataMigrator:
             return course_id
     
     def assign_teacher_to_course(self, teacher_id, course_id):
-        """Assign a teacher to a course (many-to-many relationship)"""
+        """Assign a teacher to a course (using teacher_id foreign key in courses table)"""
         with self.conn.cursor() as cursor:
-            # Check if assignment already exists
-            cursor.execute("SELECT 1 FROM course_teachers WHERE teacher_id = %s AND course_id = %s", (teacher_id, course_id))
-            if cursor.fetchone():
-                logger.info(f"👨‍🏫 Teacher {teacher_id} already assigned to course {course_id}, skipping...")
-                return
-            
+            # Update the course to assign the teacher
             cursor.execute("""
-                INSERT INTO course_teachers (teacher_id, course_id)
-                VALUES (%s, %s)
+                UPDATE courses 
+                SET teacher_id = %s 
+                WHERE id = %s AND teacher_id IS NULL
             """, (teacher_id, course_id))
             
-            logger.info(f"✅ Assigned teacher {teacher_id} to course {course_id}")
+            if cursor.rowcount > 0:
+                logger.info(f"✅ Assigned teacher {teacher_id} to course {course_id}")
+            else:
+                logger.info(f"👨‍🏫 Course {course_id} already has a teacher assigned, skipping...")
     
     def create_enrollment(self, student_id, course_id, semester, academic_year):
         """Create an enrollment"""
