@@ -1,8 +1,0 @@
-import { useEffect, useState } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { Button } from '@/components/ui/Button'
-import { Loading } from '@/components/ui/Loading'
-import { noticeService, Notice, NoticeRequest } from '@/services/noticeService'
-import { Bell, Plus, Edit, Trash2, Eye, EyeOff, AlertCircle } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { logger } from '@/lib/logger'

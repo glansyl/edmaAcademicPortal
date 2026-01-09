@@ -86,7 +86,24 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudent(Long id) {
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
-        studentRepository.delete(student);
+        
+        // Get the associated user before deleting the student
+        User user = student.getUser();
+        
+        try {
+            // Delete the student first (this will handle cascading to marks, attendance, enrollments)
+            studentRepository.delete(student);
+            
+            // Then delete the associated user
+            if (user != null) {
+                userRepository.delete(user);
+            }
+        } catch (Exception e) {
+            // Log the error for debugging
+            System.err.println("Error deleting student with ID " + id + ": " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete student: " + e.getMessage(), e);
+        }
     }
     
     @Override

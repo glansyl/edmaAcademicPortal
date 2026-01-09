@@ -27,7 +27,6 @@ EADMS is a web-based academic management platform designed for educational insti
 - Course creation and assignment
 - Marks entry and GPA calculation
 - Attendance tracking and reporting
-- Notice board and messaging system
 - Schedule management
 - Support ticket system
 - Real-time dashboard analytics
@@ -65,7 +64,6 @@ EADMS is a full-stack web application built with:
 - **Course_Service**: Service managing courses and assignments
 - **Marks_Service**: Service for marks entry and GPA calculations
 - **Attendance_Service**: Service for attendance tracking and reporting
-- **Notice_Service**: Service managing notice board announcements
 - **Message_Service**: Service handling user-to-user messaging
 - **Schedule_Service**: Service managing class schedules
 - **Ticket_Service**: Service for support ticket management
@@ -86,7 +84,6 @@ EADMS is a full-stack web application built with:
 - **Course**: Academic course with code, name, credits, and semester
 - **Marks**: Student marks/grades for specific exams
 - **Attendance**: Daily attendance records for students
-- **Notice**: System-wide or targeted announcements
 - **Message**: Direct messages between users
 - **Schedule**: Class schedule with day, time, and room information
 - **Ticket**: Support ticket for user issues and complaints
@@ -222,22 +219,7 @@ EADMS is a full-stack web application built with:
 6. WHEN a student accesses the dashboard THEN THE Report_Service SHALL return recent marks and upcoming assignments
 7. THE Report_Service SHALL calculate all statistics in real-time based on current data
 
-### Requirement 9: Notice Board Management
-
-**User Story:** As an admin, I want to create and manage notices, so that I can communicate important information to users.
-
-#### Acceptance Criteria
-
-1. WHEN an admin creates a notice THEN THE Notice_Service SHALL create a notice with title, content, priority, and target audience
-2. WHEN an admin updates a notice THEN THE Notice_Service SHALL update the notice details
-3. WHEN an admin deletes a notice THEN THE Notice_Service SHALL remove the notice from the system
-4. WHEN a user retrieves notices THEN THE Notice_Service SHALL return only active notices targeted to their role
-5. THE Notice_Service SHALL support priority levels (LOW, MEDIUM, HIGH, URGENT)
-6. THE Notice_Service SHALL support target audiences (ALL, STUDENTS, TEACHERS, ADMINS)
-7. THE Notice_Service SHALL support notice expiration dates
-8. THE Notice_Service SHALL track who created each notice and when
-
-### Requirement 10: Messaging System
+### Requirement 9: Messaging System
 
 **User Story:** As a system user, I want to send and receive messages, so that I can communicate with other users.
 
@@ -500,7 +482,7 @@ EADMS is a full-stack web application built with:
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │
 │  │  Users   │  │ Students │  │ Teachers │              │
 │  │ Courses  │  │  Marks   │  │Attendance│              │
-│  │ Notices  │  │ Messages │  │ Tickets  │              │
+│  │ Messages │  │ Tickets  │  │          │              │
 │  └──────────┘  └──────────┘  └──────────┘              │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -591,15 +573,6 @@ EADMS is a full-stack web application built with:
 - enrollment_date
 - final_grade, letter_grade, grade_points
 
-**notices**
-- id (PK)
-- title, content
-- priority
-- target_audience
-- is_active
-- created_by (FK → users)
-- expires_at
-
 **messages**
 - id (PK)
 - sender_id (FK → users)
@@ -639,7 +612,6 @@ EADMS is a full-stack web application built with:
 - GET/POST/PUT/DELETE /api/admin/teachers
 - GET/POST/PUT/DELETE /api/admin/courses
 - PUT /api/admin/courses/{courseId}/assign-teacher/{teacherId}
-- GET/POST/PUT/DELETE /api/admin/notices
 - GET/POST/PUT /api/admin/enrollments
 
 ### Teacher Endpoints
@@ -661,7 +633,6 @@ EADMS is a full-stack web application built with:
 - GET/POST /api/messages
 - GET/POST/PUT /api/tickets
 - GET /api/schedules
-- GET /api/notices
 
 ---
 

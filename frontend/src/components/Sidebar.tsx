@@ -13,8 +13,7 @@ import {
   FileText,
   UserPlus,
   ClipboardCheck,
-  BarChart3,
-  Bell
+  BarChart3
 } from 'lucide-react'
 
 export function Sidebar() {
@@ -49,7 +48,6 @@ export function Sidebar() {
         { to: '/admin/teachers', label: 'Teachers', icon: GraduationCap },
         { to: '/admin/courses', label: 'Courses', icon: FileText },
         { to: '/admin/enrollments', label: 'Enrollments', icon: UserPlus },
-        { to: '/admin/notices', label: 'Notices', icon: Bell },
       ]
     }
     return []

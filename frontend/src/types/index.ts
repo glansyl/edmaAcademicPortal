@@ -128,19 +128,6 @@ export interface Schedule {
   classType: string
 }
 
-export interface Announcement {
-  id: number
-  title: string
-  message: string
-  type: 'INFO' | 'WARNING' | 'URGENT'
-  priority: 'HIGH' | 'MEDIUM' | 'LOW'
-  date: string
-  createdBy?: string
-  targetAudience?: 'ALL' | 'STUDENTS' | 'TEACHERS' | 'ADMIN'
-  createdAt: string
-  updatedAt: string
-}
-
 export interface Enrollment {
   id: number
   studentId: number

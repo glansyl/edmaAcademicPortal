@@ -1,10 +1,10 @@
 # Efficient Academic Data Management System (EADMS)
 
-A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, notice board system, PDF report generation, and a polished professional UI.
+A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, PDF report generation, and a polished professional UI.
 
 ## 🎯 Project Overview
 
-EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records, and system-wide notices with professional PDF report generation capabilities.
+EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records with professional PDF report generation capabilities.
 
 **✅ Latest Update (Jan 2026)**: Added Student Report Card PDF Download feature with professional academic formatting. Repository cleaned and optimized for production. Support ticket system removed to streamline the application. System is production-ready with comprehensive validation and PDF generation capabilities.
 
@@ -12,7 +12,6 @@ EADMS is a comprehensive web-based platform for managing academic data in educat
 
 - **Role-Based Access Control**: Three distinct user roles with specific permissions
 - **JWT Authentication**: Secure token-based authentication with 24-hour expiration
-- **Notice Board System**: System-wide announcements with priority levels and target audiences
 - **Academic Management**: Complete student, teacher, course, marks, and attendance management
 - **PDF Report Generation**: Professional student report cards and attendance reports
 - **RESTful API**: Well-structured REST APIs following best practices
@@ -99,7 +98,6 @@ eadms/
 │   │   ├── Course.java
 │   │   ├── Marks.java
 │   │   ├── Attendance.java
-│   │   ├── Notice.java
 │   │   └── BaseEntity.java
 │   ├── repository/
 │   │   ├── UserRepository.java
@@ -107,8 +105,7 @@ eadms/
 │   │   ├── TeacherRepository.java
 │   │   ├── CourseRepository.java
 │   │   ├── MarksRepository.java
-│   │   ├── AttendanceRepository.java
-│   │   └── NoticeRepository.java
+│   │   └── AttendanceRepository.java
 │   ├── service/
 │   │   ├── AuthService.java & Impl
 │   │   ├── StudentService.java & Impl
@@ -116,14 +113,12 @@ eadms/
 │   │   ├── CourseService.java & Impl
 │   │   ├── MarksService.java & Impl
 │   │   ├── AttendanceService.java & Impl
-│   │   ├── NoticeService.java & Impl
 │   │   └── ReportService.java & Impl
 │   ├── controller/
 │   │   ├── AuthController.java
 │   │   ├── AdminController.java
 │   │   ├── TeacherController.java
 │   │   ├── StudentController.java
-│   │   ├── NoticeController.java
 │   │   └── ReportController.java
 │   ├── dto/
 │   │   ├── request/ (LoginRequest, Create/Update DTOs)
@@ -260,10 +255,6 @@ eadms/
    - Fields: attendanceDate, status (PRESENT/ABSENT/LATE/EXCUSED)
    - Relationships: ManyToOne with Student and Course
 
-7. **Notice** - System-wide announcements
-   - Fields: title, content, priority (HIGH/MEDIUM/LOW), targetAudience (ALL/STUDENTS/TEACHERS)
-   - Relationships: ManyToOne with User (creator)
-
 ## 🔐 API Endpoints
 
 ### Authentication (`/api/auth`)
@@ -291,12 +282,6 @@ eadms/
   - `PUT /courses/{courseId}/assign-teacher/{teacherId}` - Assign teacher
   - `DELETE /courses/{id}` - Delete course
 
-- **Notices**
-  - `POST /notices` - Create notice
-  - `GET /notices` - Get all notices
-  - `PUT /notices/{id}` - Update notice
-  - `DELETE /notices/{id}` - Delete notice
-
 - **Dashboard**
   - `GET /dashboard/stats` - Get admin dashboard statistics
 
@@ -318,10 +303,6 @@ eadms/
 - `GET /attendance` - Get student attendance
 - `GET /attendance/stats` - Get attendance statistics
 - `GET /gpa` - Get student GPA
-
-### Notices (`/api/notices`) - All authenticated users
-- `GET /notices` - Get notices for current user's role
-- `GET /notices/{id}` - Get specific notice
 
 ## 🧪 Testing
 

@@ -22,7 +22,6 @@ public class ReportServiceImpl implements ReportService {
     private final AttendanceRepository attendanceRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final EnrollmentService enrollmentService;
-    private final NoticeRepository noticeRepository;
     
     @Override
     public Map<String, Object> getAdminDashboardStats() {
@@ -31,7 +30,6 @@ public class ReportServiceImpl implements ReportService {
         stats.put("totalTeachers", teacherRepository.countAllTeachers());
         stats.put("totalCourses", courseRepository.countAllCourses());
         stats.put("activeUsers", userRepository.countActiveUsers());
-        stats.put("activeNotices", noticeRepository.findAllActiveNotices(java.time.LocalDateTime.now()).size());
         stats.put("classDistribution", studentRepository.countStudentsByClass());
         stats.put("departmentDistribution", teacherRepository.countTeachersByDepartment());
         return stats;
