@@ -1,7 +1,9 @@
 Efficient Academic Data Management System (EADMS) 🎓
 
 Course: Software Engineering II
+
 Institution: University of Europe for Applied Sciences (UE)
+
 Project Type: Group Course Project
 
 Team Members
