@@ -7,6 +7,7 @@ import com.eadms.exception.ResourceNotFoundException;
 import com.eadms.repository.*;
 import com.eadms.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MarksServiceImpl implements MarksService {
     
     private final MarksRepository marksRepository;
@@ -81,9 +83,27 @@ public class MarksServiceImpl implements MarksService {
     
     @Override
     public List<MarksResponse> getMarksByCourse(Long courseId) {
-        return marksRepository.findByCourseId(courseId).stream()
-                .map(this::mapToResponse)
+        log.info("Fetching marks for course ID: {}", courseId);
+        
+        List<Marks> marksList = marksRepository.findByCourseId(courseId);
+        log.info("Found {} marks records for course ID: {}", marksList.size(), courseId);
+        
+        List<MarksResponse> responses = marksList.stream()
+                .map(marks -> {
+                    try {
+                        MarksResponse response = mapToResponse(marks);
+                        log.debug("Mapped marks ID {} - Student: {} ({}), Course: {}", 
+                                response.getId(), response.getStudentName(), response.getStudentCode(), response.getCourseName());
+                        return response;
+                    } catch (Exception e) {
+                        log.error("Error mapping marks ID {}: {}", marks.getId(), e.getMessage(), e);
+                        throw e;
+                    }
+                })
                 .collect(Collectors.toList());
+        
+        log.info("Successfully mapped {} marks responses for course ID: {}", responses.size(), courseId);
+        return responses;
     }
     
     @Override
@@ -99,12 +119,40 @@ public class MarksServiceImpl implements MarksService {
     }
     
     private MarksResponse mapToResponse(Marks marks) {
-        return MarksResponse.builder()
+        // Add null checks and logging for debugging
+        if (marks == null) {
+            log.error("Marks object is null");
+            throw new IllegalArgumentException("Marks cannot be null");
+        }
+        
+        log.debug("Mapping marks ID: {}", marks.getId());
+        
+        Student student = marks.getStudent();
+        Course course = marks.getCourse();
+        
+        if (student == null) {
+            log.error("Student is null for marks ID: {}", marks.getId());
+            throw new IllegalStateException("Student is null for marks ID: " + marks.getId());
+        }
+        
+        if (course == null) {
+            log.error("Course is null for marks ID: {}", marks.getId());
+            throw new IllegalStateException("Course is null for marks ID: " + marks.getId());
+        }
+        
+        log.debug("Student details - ID: {}, StudentID: {}, Name: {} {}", 
+                student.getId(), student.getStudentId(), student.getFirstName(), student.getLastName());
+        log.debug("Course details - ID: {}, Code: {}, Name: {}", 
+                course.getId(), course.getCourseCode(), course.getCourseName());
+        
+        MarksResponse response = MarksResponse.builder()
                 .id(marks.getId())
-                .studentId(marks.getStudent().getId())
-                .studentName(marks.getStudent().getFullName())
-                .courseId(marks.getCourse().getId())
-                .courseName(marks.getCourse().getCourseName())
+                .studentId(student.getId()) // Keep database ID for backend operations
+                .studentCode(student.getStudentId()) // Student ID like CSE-001
+                .studentName(student.getFullName())
+                .courseId(course.getId())
+                .courseCode(course.getCourseCode())
+                .courseName(course.getCourseName())
                 .examType(marks.getExamType().name())
                 .marksObtained(marks.getMarksObtained())
                 .maxMarks(marks.getMaxMarks())
@@ -112,5 +160,11 @@ public class MarksServiceImpl implements MarksService {
                 .remarks(marks.getRemarks())
                 .examDate(marks.getExamDate())
                 .build();
+        
+        // Additional logging to verify the data
+        log.debug("Final response - ID: {}, StudentCode: '{}', StudentName: '{}', CourseName: '{}'", 
+                response.getId(), response.getStudentCode(), response.getStudentName(), response.getCourseName());
+        
+        return response;
     }
 }

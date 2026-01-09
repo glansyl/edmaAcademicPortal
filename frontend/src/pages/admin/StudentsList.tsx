@@ -17,7 +17,7 @@ import toast from 'react-hot-toast'
 import { formatDate } from '@/lib/utils'
 
 const ITEMS_PER_PAGE = 10
-const DEPARTMENTS = ['CSE', 'ECE', 'ISE', 'MECH', 'RA', 'AIML']
+const DEPARTMENTS = ['TECH', 'IT']
 
 export function StudentsList() {
   const [students, setStudents] = useState<Student[]>([])

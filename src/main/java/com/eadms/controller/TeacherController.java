@@ -8,6 +8,7 @@ import com.eadms.service.*;
 import com.eadms.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/teacher")
 @RequiredArgsConstructor
+@Slf4j
 public class TeacherController {
     
     private final TeacherService teacherService;
@@ -61,7 +63,16 @@ public class TeacherController {
     
     @GetMapping("/marks/course/{courseId}")
     public ResponseEntity<ApiResponse<List<MarksResponse>>> getMarksByCourse(@PathVariable Long courseId) {
+        log.info("Fetching marks for course ID: {} via API", courseId);
         List<MarksResponse> marks = marksService.getMarksByCourse(courseId);
+        log.info("Returning {} marks records for course ID: {}", marks.size(), courseId);
+        
+        // Log first few records for debugging
+        marks.stream().limit(3).forEach(mark -> 
+            log.info("Sample mark - ID: {}, Student: '{}' ({}), Course: {}", 
+                    mark.getId(), mark.getStudentName(), mark.getStudentCode(), mark.getCourseName())
+        );
+        
         return ResponseEntity.ok(ResponseUtil.success("Marks retrieved", marks));
     }
     

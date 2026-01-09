@@ -13,11 +13,14 @@ import java.util.List;
 @Repository
 public interface MarksRepository extends JpaRepository<Marks, Long> {
     
-    List<Marks> findByStudentId(Long studentId);
+    @Query("SELECT m FROM Marks m JOIN FETCH m.student JOIN FETCH m.course WHERE m.student.id = :studentId")
+    List<Marks> findByStudentId(@Param("studentId") Long studentId);
     
-    List<Marks> findByCourseId(Long courseId);
+    @Query("SELECT m FROM Marks m JOIN FETCH m.student JOIN FETCH m.course WHERE m.course.id = :courseId")
+    List<Marks> findByCourseId(@Param("courseId") Long courseId);
     
-    List<Marks> findByStudentIdAndCourseId(Long studentId, Long courseId);
+    @Query("SELECT m FROM Marks m JOIN FETCH m.student JOIN FETCH m.course WHERE m.student.id = :studentId AND m.course.id = :courseId")
+    List<Marks> findByStudentIdAndCourseId(@Param("studentId") Long studentId, @Param("courseId") Long courseId);
     
     @Query("SELECT AVG(m.marksObtained) FROM Marks m WHERE m.course.id = :courseId")
     Double findAverageMarksByCourseId(@Param("courseId") Long courseId);
@@ -25,7 +28,7 @@ public interface MarksRepository extends JpaRepository<Marks, Long> {
     @Query("SELECT AVG(m.marksObtained / m.maxMarks * 100) FROM Marks m WHERE m.student.id = :studentId")
     Double findAveragePercentageByStudentId(@Param("studentId") Long studentId);
     
-    @Query("SELECT m FROM Marks m WHERE m.student.id = :studentId ORDER BY m.examDate DESC")
+    @Query("SELECT m FROM Marks m JOIN FETCH m.student JOIN FETCH m.course WHERE m.student.id = :studentId ORDER BY m.examDate DESC")
     List<Marks> findRecentMarksByStudentId(@Param("studentId") Long studentId);
     
     @Query("SELECT DISTINCT m.course FROM Marks m WHERE m.student.id = :studentId")

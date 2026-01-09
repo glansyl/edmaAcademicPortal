@@ -14,9 +14,11 @@ import java.time.LocalDate;
 public class MarksResponse {
     
     private Long id;
-    private Long studentId;
+    private Long studentId; // Database ID
+    private String studentCode; // Student ID like CSE-001, ECE-002
     private String studentName;
     private Long courseId;
+    private String courseCode; // Course code like CS101, MATH201
     private String courseName;
     private String examType;
     private Double marksObtained;

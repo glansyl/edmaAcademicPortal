@@ -14,7 +14,7 @@ import { Teacher } from '@/types'
 import { Plus, Search, Filter, MoreVertical, Eye, Pencil, Trash2, UserPlus, BookOpen, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const DEPARTMENTS = ['CSE', 'ECE', 'ISE', 'MECH', 'RA', 'AIML']
+const DEPARTMENTS = ['TECH', 'IT']
 
 export function TeachersList() {
   const [teachers, setTeachers] = useState<Teacher[]>([])

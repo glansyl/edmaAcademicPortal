@@ -229,15 +229,10 @@ public class StudentServiceImpl implements StudentService {
     }
     
     private String getClassAbbreviation(String className) {
-        // Map common class names to abbreviations
-        // You can expand this based on your needs
+        // Map class names to abbreviations - Updated to TECH and IT only
         return switch (className.toUpperCase()) {
-            case "CSE", "COMPUTER SCIENCE", "COMPUTER SCIENCE ENGINEERING" -> "CSE";
-            case "ECE", "ELECTRONICS", "ELECTRONICS AND COMMUNICATION", "ELECTRONICS AND COMMUNICATION ENGINEERING" -> "ECE";
-            case "ISE", "INFORMATION SCIENCE", "INFORMATION SCIENCE ENGINEERING" -> "ISE";
-            case "MECH", "MECHANICAL", "MECHANICAL ENGINEERING" -> "MECH";
-            case "RA", "ROBOTICS AND AUTOMATION", "ROBOTICS" -> "RA";
-            case "AIML", "ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING", "AI AND ML" -> "AIML";
+            case "TECH", "TECHNOLOGY", "TECHNICAL" -> "TECH";
+            case "IT", "INFORMATION TECHNOLOGY", "INFO TECH" -> "IT";
             default -> className.replaceAll("[^A-Z]", "").substring(0, Math.min(4, className.replaceAll("[^A-Z]", "").length()));
         };
     }

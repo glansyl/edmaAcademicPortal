@@ -11,7 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Data Initializer - Creates default admin user
+ * Data Initializer - Creates default admin user and sample data
+ * Updated to use TECH and IT departments only
  */
 @Configuration
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class DataInitializer {
                 return;
             }
             
-            log.info("🌱 Initializing fake data for local development...");
+            log.info("🌱 Initializing sample data for development...");
             
             // Create Admin User
             User adminUser = User.builder()
@@ -54,9 +55,13 @@ public class DataInitializer {
             userRepository.save(adminUser);
             log.info("✅ Admin user created: {} / {}", adminEmail, adminPassword);
             
-            // Create Teachers
-            Teacher[] teachers = new Teacher[3];
-            for (int i = 0; i < 3; i++) {
+            // Create Teachers with TECH and IT departments only
+            Teacher[] teachers = new Teacher[4];
+            String[] departments = {"TECH", "TECH", "IT", "IT"};
+            String[] firstNames = {"John", "Sarah", "Michael", "Emma"};
+            String[] lastNames = {"Smith", "Johnson", "Williams", "Brown"};
+            
+            for (int i = 0; i < 4; i++) {
                 User teacherUser = User.builder()
                         .email("teacher" + (i + 1) + "@eadms.com")
                         .password(passwordEncoder.encode("Teacher@123"))
@@ -66,25 +71,25 @@ public class DataInitializer {
                 userRepository.save(teacherUser);
                 
                 teachers[i] = Teacher.builder()
-                        .teacherId("T" + String.format("%03d", i + 1))
-                        .firstName(new String[]{"John", "Sarah", "Michael"}[i])
-                        .lastName(new String[]{"Smith", "Johnson", "Williams"}[i])
-                        .department(new String[]{"Computer Science", "Mathematics", "Physics"}[i])
+                        .teacherId(departments[i] + "-" + String.format("%03d", (i % 2) + 1))
+                        .firstName(firstNames[i])
+                        .lastName(lastNames[i])
+                        .department(departments[i])
                         .contactNumber("555-010" + (i + 1))
                         .email("teacher" + (i + 1) + "@eadms.com")
                         .user(teacherUser)
                         .build();
                 teacherRepository.save(teachers[i]);
             }
-            log.info("✅ Created 3 teachers");
+            log.info("✅ Created 4 teachers (2 TECH, 2 IT)");
             
-            // Create Students
-            Student[] students = new Student[15];
-            String[] firstNames = {"Alice", "Bob", "Charlie", "Diana", "Emma", "Frank", "Grace", "Henry", "Ivy", "Jack", "Kate", "Liam", "Mia", "Noah", "Olivia"};
-            String[] lastNames = {"Anderson", "Brown", "Clark", "Davis", "Evans", "Foster", "Green", "Harris", "Irving", "Jones", "King", "Lee", "Miller", "Nelson", "Owen"};
-            String[] classes = {"CS-A", "CS-A", "CS-B", "CS-B", "CS-A", "CS-B", "CS-A", "CS-B", "CS-A", "CS-B", "CS-A", "CS-B", "CS-A", "CS-B", "CS-A"};
+            // Create Students with TECH and IT classes only
+            Student[] students = new Student[10];
+            String[] studentFirstNames = {"Alice", "Bob", "Charlie", "Diana", "Emma", "Frank", "Grace", "Henry", "Ivy", "Jack"};
+            String[] studentLastNames = {"Anderson", "Brown", "Clark", "Davis", "Evans", "Foster", "Green", "Harris", "Irving", "Jones"};
+            String[] classes = {"TECH", "TECH", "IT", "IT", "TECH", "IT", "TECH", "IT", "TECH", "IT"};
             
-            for (int i = 0; i < 15; i++) {
+            for (int i = 0; i < 10; i++) {
                 User studentUser = User.builder()
                         .email("student" + (i + 1) + "@eadms.com")
                         .password(passwordEncoder.encode("Student@123"))
@@ -93,10 +98,14 @@ public class DataInitializer {
                         .build();
                 userRepository.save(studentUser);
                 
+                // Calculate student ID based on class
+                long classCount = studentRepository.countByClassName(classes[i]);
+                String studentId = classes[i] + "-" + String.format("%03d", classCount + 1);
+                
                 students[i] = Student.builder()
-                        .studentId("S" + String.format("%04d", i + 1))
-                        .firstName(firstNames[i])
-                        .lastName(lastNames[i])
+                        .studentId(studentId)
+                        .firstName(studentFirstNames[i])
+                        .lastName(studentLastNames[i])
                         .className(classes[i])
                         .gender(i % 3 == 0 ? Student.Gender.MALE : (i % 3 == 1 ? Student.Gender.FEMALE : Student.Gender.OTHER))
                         .contactNumber("555-020" + String.format("%02d", i + 1))
@@ -105,101 +114,9 @@ public class DataInitializer {
                         .build();
                 studentRepository.save(students[i]);
             }
-            log.info("✅ Created 15 students");
+            log.info("✅ Created 10 students (5 TECH, 5 IT)");
             
-            // Create Courses
-            Course[] courses = new Course[5];
-            String[] courseCodes = {"CS101", "CS201", "MATH101", "PHY101", "CS301"};
-            String[] courseNames = {"Introduction to Programming", "Data Structures", "Calculus I", "Physics Fundamentals", "Database Systems"};
-            int[] semesters = {1, 3, 1, 2, 5};
-            int[] credits = {4, 4, 3, 3, 4};
-            
-            for (int i = 0; i < 5; i++) {
-                courses[i] = Course.builder()
-                        .courseCode(courseCodes[i])
-                        .courseName(courseNames[i])
-                        .semester(semesters[i])
-                        .credits(credits[i])
-                        .description("This is a comprehensive course covering " + courseNames[i].toLowerCase())
-                        .build();
-                courseRepository.save(courses[i]);
-                
-                // Assign teachers to courses
-                courses[i].getTeachers().add(teachers[i % 3]);
-                teachers[i % 3].getCourses().add(courses[i]);
-                courseRepository.save(courses[i]);
-                teacherRepository.save(teachers[i % 3]);
-            }
-            log.info("✅ Created 5 courses");
-            
-            // Create Enrollments
-            int enrollmentCount = 0;
-            int currentYear = java.time.LocalDate.now().getYear();
-            for (int i = 0; i < students.length; i++) {
-                for (int j = 0; j < 3; j++) {
-                    Enrollment enrollment = Enrollment.builder()
-                            .student(students[i])
-                            .course(courses[j])
-                            .semester(courses[j].getSemester())
-                            .academicYear(currentYear)
-                            .status(Enrollment.EnrollmentStatus.ACTIVE)
-                            .enrollmentDate(java.time.LocalDate.now().minusDays(30))
-                            .build();
-                    enrollmentRepository.save(enrollment);
-                    enrollmentCount++;
-                }
-            }
-            log.info("✅ Created {} enrollments", enrollmentCount);
-            
-            // Create Attendance Records
-            int attendanceCount = 0;
-            java.time.LocalDate today = java.time.LocalDate.now();
-            Attendance.Status[] statuses = {Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.PRESENT, Attendance.Status.ABSENT, Attendance.Status.LATE, Attendance.Status.EXCUSED};
-            
-            for (int day = 0; day < 10; day++) {
-                java.time.LocalDate date = today.minusDays(day);
-                for (int i = 0; i < students.length; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        Attendance attendance = Attendance.builder()
-                                .student(students[i])
-                                .course(courses[j])
-                                .attendanceDate(date)
-                                .status(statuses[(i + j + day) % statuses.length])
-                                .build();
-                        attendanceRepository.save(attendance);
-                        attendanceCount++;
-                    }
-                }
-            }
-            log.info("✅ Created {} attendance records", attendanceCount);
-            
-            // Create Marks
-            int marksCount = 0;
-            Marks.ExamType[] examTypes = {Marks.ExamType.QUIZ, Marks.ExamType.ASSIGNMENT, Marks.ExamType.MIDTERM, Marks.ExamType.FINAL};
-            
-            for (int i = 0; i < students.length; i++) {
-                for (int j = 0; j < 3; j++) {
-                    for (Marks.ExamType examType : examTypes) {
-                        int maxMarks = examType == Marks.ExamType.FINAL ? 100 : (examType == Marks.ExamType.MIDTERM ? 50 : 20);
-                        double marksObtained = maxMarks * (0.6 + (Math.random() * 0.35));
-                        
-                        Marks marks = Marks.builder()
-                                .student(students[i])
-                                .course(courses[j])
-                                .examType(examType)
-                                .marksObtained(marksObtained)
-                                .maxMarks((double) maxMarks)
-                                .examDate(today.minusDays(15 + (examTypes.length - java.util.Arrays.asList(examTypes).indexOf(examType)) * 10))
-                                .remarks(marksObtained >= maxMarks * 0.8 ? "Excellent" : (marksObtained >= maxMarks * 0.6 ? "Good" : "Needs Improvement"))
-                                .build();
-                        marksRepository.save(marks);
-                        marksCount++;
-                    }
-                }
-            }
-            log.info("✅ Created {} marks records", marksCount);
-            
-            log.info("🎉 Fake data initialization complete!");
+            log.info("🎉 Sample data initialization complete!");
             log.info("📧 Login Credentials:");
             log.info("   Admin: {} / {}", adminEmail, adminPassword);
             log.info("   Teacher: teacher1@eadms.com / Teacher@123");
