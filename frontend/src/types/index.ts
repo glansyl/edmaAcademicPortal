@@ -110,15 +110,22 @@ export interface Assignment {
 export interface Schedule {
   id: number
   courseId: number
+  courseCode: string
   courseName: string
-  courseCode?: string
-  dayOfWeek: string
+  teacherId?: number
+  teacherName: string
+  title: string
+  description?: string
+  startDateTime: string
+  endDateTime: string
+  recurrence: 'NONE' | 'WEEKLY'
+  location?: string
+  // Legacy fields for backward compatibility
+  dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
   startTime: string
   endTime: string
-  room: string
-  teacherId?: number
-  teacherName?: string
-  semester: number
+  roomNumber: string
+  classType: string
 }
 
 export interface Announcement {
