@@ -71,7 +71,7 @@ Getting Started
 
 Prerequisites
 
-- **JDK 17 required for backend build:** Due to Lombok's javac internals, the project must be built with Java 17 (JDK 17). Using very new JDKs (for example JDK 24) can cause compilation failures. On Windows you can run the provided installer script to install Temurin 17:
+- **JDK 17 required for backend build:** Due to Lombok's javac internals, the project must be built with Java 17 (JDK 17).You can download it from here https://adoptium.net/ Using very new JDKs (for example JDK 24) can cause compilation failures. On Windows you can run the provided installer script to install Temurin 17:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/install-temurin17.ps1
@@ -170,6 +170,7 @@ Clone the repository and navigate to the project directory:
 ```bash
 git clone <repository-url>
 cd edmaAcademicPortal
+mvn install
 ```
 
 Start the backend:
