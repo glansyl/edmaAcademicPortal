@@ -9,9 +9,7 @@ services:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: DATABASE_URL
-        fromDatabase:
-          name: edma-db
-          property: connectionString
+        value: "postgresql://glansyldsouza:Zv1Dt7YUOM1ksUnIoA2OEyzD3L3EIAIh@dpg-d5fn7dpr0fns73busteg-a.oregon-postgres.render.com/edmadb_vwl0"
       - key: JWT_SECRET
         generateValue: true
       - key: JWT_EXPIRATION
@@ -19,9 +17,3 @@ services:
       - key: CORS_ALLOWED_ORIGINS
         value: "https://edmaacademicportal.onrender.com"
     healthCheckPath: /actuator/health
-
-databases:
-  # PostgreSQL Database
-  - name: edma-db
-    databaseName: edmadb
-    user: glansyldsouza
