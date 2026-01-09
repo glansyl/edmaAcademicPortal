@@ -71,7 +71,15 @@ Getting Started
 
 Prerequisites
 
-To run the project, Java version 17 or higher is required along with Maven version 3.8 or higher. Node.js version 18 or higher is required for the frontend. PostgreSQL is required for production deployment, while H2 can be used for development.
+- **JDK 17 required for backend build:** Due to Lombok's javac internals, the project must be built with Java 17 (JDK 17). Using very new JDKs (for example JDK 24) can cause compilation failures. On Windows you can run the provided installer script to install Temurin 17:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install-temurin17.ps1
+```
+
+- **Maven:** 3.8 or higher.
+- **Node.js:** 18 or higher (for the frontend).
+- **Database:** PostgreSQL for production; H2 is available for development.
 
 Backend Setup
 
