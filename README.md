@@ -7,8 +7,11 @@ Project Type: Group Course Project
 Team Members
 
 Saniya Sunny (67168510)
+
 Ann Alex (24202804)
+
 Glansyl Meldon Dsouza (69082142)
+
 Sukhpreet Kaur (49495067)
 
 A complete academic data management system developed using Spring Boot for the backend and React with TypeScript for the frontend. The application is intended to simulate a real-world academic management platform and includes features such as role-based access control, secure authentication, academic record management, and automated PDF report generation. The system is designed with production-level considerations, including validation, error handling, and deployment readiness.
