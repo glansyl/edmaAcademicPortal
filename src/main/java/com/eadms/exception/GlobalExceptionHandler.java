@@ -32,6 +32,13 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(ex.getMessage()));
     }
     
+    @ExceptionHandler(ScheduleConflictException.class)
+    public ResponseEntity<ApiResponse<Object>> handleScheduleConflictException(ScheduleConflictException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+    
     @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ApiResponse<Object>> handleUnauthorizedException(UnauthorizedException ex) {
         return ResponseEntity
@@ -77,12 +84,14 @@ public class GlobalExceptionHandler {
             if (errorMsg.contains("UK_6DOTKOTT2KJSP8VW4D0M25FB7") || errorMsg.contains("users(email")) {
                 // Email unique constraint violation
                 message = "Email address is already registered. Please use a different email or login with existing account.";
-            } else if (errorMsg.contains("student_id")) {
+            } else if (errorMsg.contains("students") && errorMsg.contains("student_id")) {
                 message = "Student ID already exists. Please use a different ID.";
-            } else if (errorMsg.contains("teacher_id")) {
+            } else if (errorMsg.contains("teachers") && errorMsg.contains("teacher_id")) {
                 message = "Teacher ID already exists. Please use a different ID.";
             } else if (errorMsg.contains("course_code")) {
                 message = "Course code already exists. Please use a different code.";
+            } else if (errorMsg.contains("schedules")) {
+                message = "Schedule conflict detected. Please check the time slot and try again.";
             } else if (errorMsg.contains("Unique index") || errorMsg.contains("unique constraint")) {
                 message = "This record already exists in the system. Please check for duplicates.";
             } else if (errorMsg.contains("foreign key constraint") || errorMsg.contains("violates foreign key")) {

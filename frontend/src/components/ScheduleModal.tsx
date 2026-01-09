@@ -85,8 +85,25 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!formData.startDateTime) newErrors.startDateTime = 'Start time is required';
     if (!formData.endDateTime) newErrors.endDateTime = 'End time is required';
-    if (new Date(formData.startDateTime) >= new Date(formData.endDateTime)) {
+    
+    const startDate = new Date(formData.startDateTime);
+    const endDate = new Date(formData.endDateTime);
+    
+    if (startDate >= endDate) {
       newErrors.endDateTime = 'End time must be after start time';
+    }
+    
+    // Check if schedule spans multiple days
+    const startDay = startDate.toDateString();
+    const endDay = endDate.toDateString();
+    if (startDay !== endDay) {
+      newErrors.endDateTime = 'Schedule cannot span multiple days. Please ensure start and end times are on the same day.';
+    }
+    
+    // Check for unreasonably long classes (more than 8 hours)
+    const durationHours = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60);
+    if (durationHours > 8) {
+      newErrors.endDateTime = 'Class duration cannot exceed 8 hours. Please check your times.';
     }
 
     setErrors(newErrors);
@@ -97,7 +114,10 @@ export const ScheduleModal: React.FC<ScheduleModalProps> = ({
       await onSubmit(formData);
       onClose();
     } catch (error: any) {
-      setErrors({ submit: error.message || 'Failed to save schedule' });
+      // Extract error message from backend response
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to save schedule';
+      console.error('Schedule submission error:', error);
+      setErrors({ submit: errorMessage });
     } finally {
       setLoading(false);
     }

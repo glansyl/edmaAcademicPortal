@@ -3,6 +3,8 @@ package com.eadms.controller;
 import com.eadms.dto.ScheduleDTO;
 import com.eadms.entity.Teacher;
 import com.eadms.entity.User;
+import com.eadms.exception.ResourceNotFoundException;
+import com.eadms.exception.UnauthorizedException;
 import com.eadms.repository.TeacherRepository;
 import com.eadms.repository.UserRepository;
 import com.eadms.service.ScheduleService;
@@ -60,7 +62,7 @@ public class TeacherScheduleController {
         // Verify the schedule belongs to this teacher
         ScheduleDTO existingSchedule = scheduleService.getScheduleById(id);
         if (!existingSchedule.getTeacherId().equals(teacher.getId())) {
-            throw new RuntimeException("You can only update your own schedules");
+            throw new UnauthorizedException("You can only update your own schedules");
         }
         
         scheduleDTO.setTeacherId(teacher.getId());
@@ -76,7 +78,7 @@ public class TeacherScheduleController {
         // Verify the schedule belongs to this teacher
         ScheduleDTO existingSchedule = scheduleService.getScheduleById(id);
         if (!existingSchedule.getTeacherId().equals(teacher.getId())) {
-            throw new RuntimeException("You can only delete your own schedules");
+            throw new UnauthorizedException("You can only delete your own schedules");
         }
         
         scheduleService.deleteSchedule(id);
@@ -86,8 +88,8 @@ public class TeacherScheduleController {
     private Teacher getCurrentTeacher(Authentication authentication) {
         String email = authentication.getName();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return teacherRepository.findByUserId(user.getId())
-                .orElseThrow(() -> new RuntimeException("Teacher profile not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher profile not found"));
     }
 }

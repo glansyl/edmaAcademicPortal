@@ -5,6 +5,9 @@ import com.eadms.entity.Course;
 import com.eadms.entity.Schedule;
 import com.eadms.entity.Student;
 import com.eadms.entity.Teacher;
+import com.eadms.exception.BadRequestException;
+import com.eadms.exception.ResourceNotFoundException;
+import com.eadms.exception.ScheduleConflictException;
 import com.eadms.repository.CourseRepository;
 import com.eadms.repository.ScheduleRepository;
 import com.eadms.repository.StudentRepository;
@@ -36,7 +39,7 @@ public class ScheduleService {
     
     public ScheduleDTO getScheduleById(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
         return convertToDTO(schedule);
     }
     
@@ -72,17 +75,32 @@ public class ScheduleService {
     
     public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
         Course course = courseRepository.findById(scheduleDTO.getCourseId())
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
         
         Teacher teacher = teacherRepository.findById(scheduleDTO.getTeacherId())
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
+        
+        // Validate date/time
+        if (scheduleDTO.getStartDateTime() == null || scheduleDTO.getEndDateTime() == null) {
+            throw new BadRequestException("Start and end date/time are required");
+        }
+        
+        if (scheduleDTO.getEndDateTime().isBefore(scheduleDTO.getStartDateTime())) {
+            throw new BadRequestException("End time must be after start time");
+        }
         
         // Check for conflicts
         List<Schedule> conflicts = scheduleRepository.findConflictingSchedules(
                 teacher.getId(), scheduleDTO.getStartDateTime(), scheduleDTO.getEndDateTime());
         
         if (!conflicts.isEmpty()) {
-            throw new RuntimeException("Schedule conflicts with existing schedule");
+            Schedule conflict = conflicts.get(0);
+            throw new ScheduleConflictException(String.format(
+                "Schedule conflicts with existing class '%s' from %s to %s", 
+                conflict.getTitle(),
+                conflict.getStartDateTime(),
+                conflict.getEndDateTime()
+            ));
         }
         
         Schedule schedule = Schedule.builder()
@@ -103,17 +121,17 @@ public class ScheduleService {
     
     public ScheduleDTO updateSchedule(Long id, ScheduleDTO scheduleDTO) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
         
         if (scheduleDTO.getCourseId() != null) {
             Course course = courseRepository.findById(scheduleDTO.getCourseId())
-                    .orElseThrow(() -> new RuntimeException("Course not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Course not found"));
             schedule.setCourse(course);
         }
         
         if (scheduleDTO.getTeacherId() != null) {
             Teacher teacher = teacherRepository.findById(scheduleDTO.getTeacherId())
-                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                    .orElseThrow(() -> new ResourceNotFoundException("Teacher not found"));
             schedule.setTeacher(teacher);
         }
         
@@ -139,6 +157,13 @@ public class ScheduleService {
             schedule.setClassType(scheduleDTO.getClassType());
         }
         
+        // Validate date/time if changed
+        if (scheduleDTO.getStartDateTime() != null || scheduleDTO.getEndDateTime() != null) {
+            if (schedule.getEndDateTime().isBefore(schedule.getStartDateTime())) {
+                throw new BadRequestException("End time must be after start time");
+            }
+        }
+        
         // Check for conflicts if datetime changed
         if (scheduleDTO.getStartDateTime() != null || scheduleDTO.getEndDateTime() != null) {
             final Long scheduleId = schedule.getId();
@@ -149,7 +174,13 @@ public class ScheduleService {
                     .collect(Collectors.toList());
             
             if (!conflicts.isEmpty()) {
-                throw new RuntimeException("Schedule conflicts with existing schedule");
+                Schedule conflict = conflicts.get(0);
+                throw new ScheduleConflictException(String.format(
+                    "Schedule conflicts with existing class '%s' from %s to %s", 
+                    conflict.getTitle(),
+                    conflict.getStartDateTime(),
+                    conflict.getEndDateTime()
+                ));
             }
         }
         
@@ -159,11 +190,11 @@ public class ScheduleService {
     
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Schedule not found"));
         
         // Prevent deleting past events
         if (schedule.getStartDateTime() != null && schedule.getStartDateTime().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("Cannot delete past events");
+            throw new BadRequestException("Cannot delete past events");
         }
         
         scheduleRepository.deleteById(id);
