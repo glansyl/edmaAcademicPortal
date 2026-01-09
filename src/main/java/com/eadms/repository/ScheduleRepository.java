@@ -2,6 +2,7 @@ package com.eadms.repository;
 
 import com.eadms.entity.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -52,4 +53,9 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findConflictingSchedules(@Param("teacherId") Long teacherId,
                                             @Param("startDateTime") LocalDateTime startDateTime,
                                             @Param("endDateTime") LocalDateTime endDateTime);
+    
+    // Delete all schedules for a specific teacher
+    @Modifying
+    @Query("DELETE FROM Schedule s WHERE s.teacher.id = :teacherId")
+    void deleteByTeacherId(@Param("teacherId") Long teacherId);
 }

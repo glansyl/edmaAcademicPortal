@@ -2,7 +2,9 @@ package com.eadms.repository;
 
 import com.eadms.entity.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +30,9 @@ public interface TeacherRepository extends JpaRepository<Teacher, Long> {
     
     @Query("SELECT t.department, COUNT(t) FROM Teacher t GROUP BY t.department")
     List<Object[]> countTeachersByDepartment();
+    
+    // Custom query to remove teacher from course_teachers junction table
+    @Modifying
+    @Query(value = "DELETE FROM course_teachers WHERE teacher_id = :teacherId", nativeQuery = true)
+    void removeTeacherFromAllCourses(@Param("teacherId") Long teacherId);
 }

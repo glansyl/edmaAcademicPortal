@@ -7,9 +7,12 @@ import com.eadms.entity.Teacher;
 import com.eadms.entity.User;
 import com.eadms.exception.BadRequestException;
 import com.eadms.exception.ResourceNotFoundException;
+import com.eadms.repository.CourseRepository;
+import com.eadms.repository.ScheduleRepository;
 import com.eadms.repository.TeacherRepository;
 import com.eadms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +22,14 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TeacherServiceImpl implements TeacherService {
     
     private final TeacherRepository teacherRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
+    private final CourseRepository courseRepository;
+    private final ScheduleRepository scheduleRepository;
     
     @Override
     @Transactional
@@ -90,35 +96,57 @@ public class TeacherServiceImpl implements TeacherService {
     @Override
     @Transactional
     public void deleteTeacher(Long id) {
+        log.info("Starting deletion of teacher with ID: {}", id);
+        
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher", "id", id));
         
+        log.info("Found teacher: {} {} (ID: {}, TeacherID: {})", 
+                teacher.getFirstName(), teacher.getLastName(), teacher.getId(), teacher.getTeacherId());
+        
         // Get the associated user before deleting the teacher
         User user = teacher.getUser();
+        log.info("Associated user ID: {}, Email: {}", user != null ? user.getId() : "null", user != null ? user.getEmail() : "null");
         
         try {
-            // First, remove teacher from all assigned courses to avoid foreign key constraint violations
-            if (teacher.getCourses() != null && !teacher.getCourses().isEmpty()) {
-                // Create a copy of the list to avoid ConcurrentModificationException
-                List<Course> coursesToUpdate = new ArrayList<>(teacher.getCourses());
-                for (Course course : coursesToUpdate) {
-                    course.getTeachers().remove(teacher);
-                }
-                teacher.getCourses().clear();
-            }
+            // Check if teacher has course assignments
+            int courseCount = teacher.getCourses() != null ? teacher.getCourses().size() : 0;
+            log.info("Teacher is assigned to {} courses", courseCount);
             
-            // Delete the teacher (this will handle cascading to related entities)
+            // Step 1: Delete all schedules for this teacher
+            log.info("Deleting all schedules for teacher...");
+            scheduleRepository.deleteByTeacherId(id);
+            scheduleRepository.flush();
+            log.info("Successfully deleted teacher schedules");
+            
+            // Step 2: Remove teacher from all course assignments
+            log.info("Removing teacher from all course assignments...");
+            teacherRepository.removeTeacherFromAllCourses(id);
+            teacherRepository.flush();
+            log.info("Successfully removed teacher from course assignments");
+            
+            // Step 3: Delete the teacher entity
+            log.info("Deleting teacher entity...");
             teacherRepository.delete(teacher);
+            teacherRepository.flush();
+            log.info("Successfully deleted teacher entity");
             
-            // Then delete the associated user
+            // Step 4: Delete the associated user
             if (user != null) {
+                log.info("Deleting associated user...");
                 userRepository.delete(user);
+                userRepository.flush();
+                log.info("Successfully deleted associated user");
             }
+            
+            log.info("Teacher deletion completed successfully for ID: {}", id);
+            
         } catch (Exception e) {
-            // Log the error for debugging
-            System.err.println("Error deleting teacher with ID " + id + ": " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to delete teacher: " + e.getMessage(), e);
+            // Log the actual error for debugging in production
+            log.error("Error deleting teacher with ID {}: {}", id, e.getMessage(), e);
+            
+            // Re-throw with more specific error message
+            throw new RuntimeException("Failed to delete teacher. This may be due to existing course assignments or database constraints. Error: " + e.getMessage(), e);
         }
     }
     
