@@ -7,9 +7,13 @@ import com.eadms.entity.Student;
 import com.eadms.entity.User;
 import com.eadms.exception.BadRequestException;
 import com.eadms.exception.ResourceNotFoundException;
+import com.eadms.repository.AttendanceRepository;
+import com.eadms.repository.EnrollmentRepository;      
+import com.eadms.repository.MarksRepository;
 import com.eadms.repository.StudentRepository;
 import com.eadms.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +23,16 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StudentServiceImpl implements StudentService {
     
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final AuthService authService;
     private final ModelMapper modelMapper;
+    private final MarksRepository marksRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final EnrollmentRepository enrollmentRepository;
     
     @Override
     @Transactional
@@ -84,25 +92,73 @@ public class StudentServiceImpl implements StudentService {
     @Override
     @Transactional
     public void deleteStudent(Long id) {
+        log.info("Starting deletion of student with ID: {}", id);
+        
         Student student = studentRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
         
+        log.info("Found student: {} {} (ID: {}, StudentID: {})", 
+                student.getFirstName(), student.getLastName(), student.getId(), student.getStudentId());
+        
         // Get the associated user before deleting the student
         User user = student.getUser();
+        log.info("Associated user ID: {}, Email: {}", user != null ? user.getId() : "null", user != null ? user.getEmail() : "null");
         
         try {
-            // Delete the student first (this will handle cascading to marks, attendance, enrollments)
-            studentRepository.delete(student);
+            // Check student's academic records
+            long marksCount = marksRepository.countByStudentId(id);
+            long attendanceCount = attendanceRepository.countTotalByStudentId(id);
+            long enrollmentCount = enrollmentRepository.countActiveEnrollmentsByStudentId(id);
             
-            // Then delete the associated user
-            if (user != null) {
-                userRepository.delete(user);
+            log.info("Student has {} marks records, {} attendance records, {} active enrollments", 
+                    marksCount, attendanceCount, enrollmentCount);
+            
+            // Step 1: Delete marks (should cascade automatically, but let's be explicit for logging)
+            if (marksCount > 0) {
+                log.info("Deleting {} marks records for student...", marksCount);
+                marksRepository.deleteByStudentId(id);
+                marksRepository.flush();
+                log.info("Successfully deleted marks records");
             }
+            
+            // Step 2: Delete attendance records (should cascade automatically, but let's be explicit for logging)
+            if (attendanceCount > 0) {
+                log.info("Deleting {} attendance records for student...", attendanceCount);
+                attendanceRepository.deleteByStudentId(id);
+                attendanceRepository.flush();
+                log.info("Successfully deleted attendance records");
+            }
+            
+            // Step 3: Delete enrollment records (should cascade automatically, but let's be explicit for logging)
+            if (enrollmentCount > 0) {
+                log.info("Deleting {} enrollment records for student...", enrollmentCount);
+                enrollmentRepository.deleteByStudentId(id);
+                enrollmentRepository.flush();
+                log.info("Successfully deleted enrollment records");
+            }
+            
+            // Step 4: Delete the student entity
+            log.info("Deleting student entity...");
+            studentRepository.delete(student);
+            studentRepository.flush();
+            log.info("Successfully deleted student entity");
+            
+            // Step 5: Delete the associated user
+            if (user != null) {
+                log.info("Deleting associated user...");
+                userRepository.delete(user);
+                userRepository.flush();
+                log.info("Successfully deleted associated user");
+            }
+            
+            log.info("Student deletion completed successfully for ID: {}", id);
+            
         } catch (Exception e) {
-            // Log the error for debugging
-            System.err.println("Error deleting student with ID " + id + ": " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Failed to delete student: " + e.getMessage(), e);
+            // Log the actual error for debugging in production
+            log.error("Error deleting student with ID {}: {}", id, e.getMessage(), e);
+            
+            // Re-throw with more specific error message
+            throw new RuntimeException("Failed to delete student. This may be due to existing academic records or database constraints. Error: " + e.getMessage(), e);
         }
     }
     

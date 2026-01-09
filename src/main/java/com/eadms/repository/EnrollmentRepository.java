@@ -3,6 +3,7 @@ package com.eadms.repository;
 import com.eadms.entity.Enrollment;
 import com.eadms.entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -66,4 +67,9 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     // Find all students enrolled in a specific course
     @Query("SELECT e.student FROM Enrollment e WHERE e.course.id = :courseId AND e.status = 'ACTIVE'")
     List<com.eadms.entity.Student> findActiveStudentsByCourseId(@Param("courseId") Long courseId);
+    
+    // Delete all enrollments for a specific student
+    @Modifying
+    @Query("DELETE FROM Enrollment e WHERE e.student.id = :studentId")
+    void deleteByStudentId(@Param("studentId") Long studentId);
 }

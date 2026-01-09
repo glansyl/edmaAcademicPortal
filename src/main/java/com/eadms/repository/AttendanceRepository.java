@@ -2,6 +2,7 @@ package com.eadms.repository;
 
 import com.eadms.entity.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -37,4 +38,9 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     
     @Query("SELECT a.status, COUNT(a) FROM Attendance a WHERE a.student.id = :studentId GROUP BY a.status")
     List<Object[]> countAttendanceByStatus(@Param("studentId") Long studentId);
+    
+    // Delete all attendance records for a specific student
+    @Modifying
+    @Query("DELETE FROM Attendance a WHERE a.student.id = :studentId")
+    void deleteByStudentId(@Param("studentId") Long studentId);
 }

@@ -3,6 +3,7 @@ package com.eadms.repository;
 import com.eadms.entity.Course;
 import com.eadms.entity.Marks;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -32,4 +33,13 @@ public interface MarksRepository extends JpaRepository<Marks, Long> {
     
     @Query("SELECT m.examType, AVG(m.marksObtained / m.maxMarks * 100) FROM Marks m WHERE m.course.id = :courseId GROUP BY m.examType")
     List<Object[]> findAverageMarksByExamType(@Param("courseId") Long courseId);
+    
+    // Count marks for a student
+    @Query("SELECT COUNT(m) FROM Marks m WHERE m.student.id = :studentId")
+    Long countByStudentId(@Param("studentId") Long studentId);
+    
+    // Delete all marks for a specific student
+    @Modifying
+    @Query("DELETE FROM Marks m WHERE m.student.id = :studentId")
+    void deleteByStudentId(@Param("studentId") Long studentId);
 }
