@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class ScheduleService {
     }
     
     public List<ScheduleDTO> getSchedulesByTeacherId(Long teacherId) {
-        return scheduleRepository.findByTeacherId(teacherId).stream()
+        return scheduleRepository.findByTeacherIdOrderByStartDateTime(teacherId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
@@ -57,16 +58,42 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
     
+    public List<ScheduleDTO> getTeacherSchedulesByDateRange(Long teacherId, LocalDateTime startDate, LocalDateTime endDate) {
+        return scheduleRepository.findByTeacherIdAndDateRange(teacherId, startDate, endDate).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    public List<ScheduleDTO> getStudentSchedulesByDateRange(Long studentId, LocalDateTime startDate, LocalDateTime endDate) {
+        return scheduleRepository.findByStudentIdAndDateRange(studentId, startDate, endDate).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
     public ScheduleDTO createSchedule(ScheduleDTO scheduleDTO) {
         Course course = courseRepository.findById(scheduleDTO.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
         
+        Teacher teacher = teacherRepository.findById(scheduleDTO.getTeacherId())
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+        
+        // Check for conflicts
+        List<Schedule> conflicts = scheduleRepository.findConflictingSchedules(
+                teacher.getId(), scheduleDTO.getStartDateTime(), scheduleDTO.getEndDateTime());
+        
+        if (!conflicts.isEmpty()) {
+            throw new RuntimeException("Schedule conflicts with existing schedule");
+        }
+        
         Schedule schedule = Schedule.builder()
                 .course(course)
-                .dayOfWeek(scheduleDTO.getDayOfWeek())
-                .startTime(scheduleDTO.getStartTime())
-                .endTime(scheduleDTO.getEndTime())
-                .roomNumber(scheduleDTO.getRoomNumber())
+                .teacher(teacher)
+                .title(scheduleDTO.getTitle())
+                .description(scheduleDTO.getDescription())
+                .startDateTime(scheduleDTO.getStartDateTime())
+                .endDateTime(scheduleDTO.getEndDateTime())
+                .recurrence(scheduleDTO.getRecurrence() != null ? scheduleDTO.getRecurrence() : Schedule.RecurrenceType.NONE)
+                .location(scheduleDTO.getLocation())
                 .classType(scheduleDTO.getClassType())
                 .build();
         
@@ -84,20 +111,46 @@ public class ScheduleService {
             schedule.setCourse(course);
         }
         
-        if (scheduleDTO.getDayOfWeek() != null) {
-            schedule.setDayOfWeek(scheduleDTO.getDayOfWeek());
+        if (scheduleDTO.getTeacherId() != null) {
+            Teacher teacher = teacherRepository.findById(scheduleDTO.getTeacherId())
+                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+            schedule.setTeacher(teacher);
         }
-        if (scheduleDTO.getStartTime() != null) {
-            schedule.setStartTime(scheduleDTO.getStartTime());
+        
+        if (scheduleDTO.getTitle() != null) {
+            schedule.setTitle(scheduleDTO.getTitle());
         }
-        if (scheduleDTO.getEndTime() != null) {
-            schedule.setEndTime(scheduleDTO.getEndTime());
+        if (scheduleDTO.getDescription() != null) {
+            schedule.setDescription(scheduleDTO.getDescription());
         }
-        if (scheduleDTO.getRoomNumber() != null) {
-            schedule.setRoomNumber(scheduleDTO.getRoomNumber());
+        if (scheduleDTO.getStartDateTime() != null) {
+            schedule.setStartDateTime(scheduleDTO.getStartDateTime());
+        }
+        if (scheduleDTO.getEndDateTime() != null) {
+            schedule.setEndDateTime(scheduleDTO.getEndDateTime());
+        }
+        if (scheduleDTO.getRecurrence() != null) {
+            schedule.setRecurrence(scheduleDTO.getRecurrence());
+        }
+        if (scheduleDTO.getLocation() != null) {
+            schedule.setLocation(scheduleDTO.getLocation());
         }
         if (scheduleDTO.getClassType() != null) {
             schedule.setClassType(scheduleDTO.getClassType());
+        }
+        
+        // Check for conflicts if datetime changed
+        if (scheduleDTO.getStartDateTime() != null || scheduleDTO.getEndDateTime() != null) {
+            final Long scheduleId = schedule.getId();
+            List<Schedule> conflicts = scheduleRepository.findConflictingSchedules(
+                    schedule.getTeacher().getId(), schedule.getStartDateTime(), schedule.getEndDateTime())
+                    .stream()
+                    .filter(s -> !s.getId().equals(scheduleId))
+                    .collect(Collectors.toList());
+            
+            if (!conflicts.isEmpty()) {
+                throw new RuntimeException("Schedule conflicts with existing schedule");
+            }
         }
         
         schedule = scheduleRepository.save(schedule);
@@ -105,14 +158,20 @@ public class ScheduleService {
     }
     
     public void deleteSchedule(Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+        
+        // Prevent deleting past events
+        if (schedule.getStartDateTime() != null && schedule.getStartDateTime().isBefore(LocalDateTime.now())) {
+            throw new RuntimeException("Cannot delete past events");
+        }
+        
         scheduleRepository.deleteById(id);
     }
     
     private ScheduleDTO convertToDTO(Schedule schedule) {
-        String teacherName = schedule.getCourse().getTeachers() != null && !schedule.getCourse().getTeachers().isEmpty()
-                ? schedule.getCourse().getTeachers().stream()
-                        .map(t -> t.getFirstName() + " " + t.getLastName())
-                        .collect(java.util.stream.Collectors.joining(", "))
+        String teacherName = schedule.getTeacher() != null 
+                ? schedule.getTeacher().getFirstName() + " " + schedule.getTeacher().getLastName()
                 : "Not Assigned";
         
         return ScheduleDTO.builder()
@@ -120,7 +179,15 @@ public class ScheduleService {
                 .courseId(schedule.getCourse().getId())
                 .courseCode(schedule.getCourse().getCourseCode())
                 .courseName(schedule.getCourse().getCourseName())
+                .teacherId(schedule.getTeacher() != null ? schedule.getTeacher().getId() : null)
                 .teacherName(teacherName)
+                .title(schedule.getTitle())
+                .description(schedule.getDescription())
+                .startDateTime(schedule.getStartDateTime())
+                .endDateTime(schedule.getEndDateTime())
+                .recurrence(schedule.getRecurrence())
+                .location(schedule.getLocation())
+                // Legacy fields for backward compatibility
                 .dayOfWeek(schedule.getDayOfWeek())
                 .startTime(schedule.getStartTime())
                 .endTime(schedule.getEndTime())
