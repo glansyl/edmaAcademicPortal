@@ -1,18 +1,16 @@
-
 /**
  * Professional Report Card PDF Generator
  * Creates academic-quality PDF report cards using jsPDF and jspdf-autotable
  */
 
-import * as jsPDF from 'jspdf'
-import 'jspdf-autotable'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
 import { ReportCardData, ReportCardSubject, ReportCardAssessment } from '@/services/reportCardService'
 import { formatPercentage, formatGPA } from './gradeCalculations'
 
 // Extend jsPDF type to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
-    autoTable: (options: any) => jsPDF
     lastAutoTable: { finalY: number }
   }
 }
@@ -62,14 +60,14 @@ const PDF_STYLES: PdfStyles = {
 }
 
 export class ReportCardPdfGenerator {
-  private doc: jsPDF.jsPDF
+  private doc: jsPDF
   private pageWidth: number
   private pageHeight: number
   private currentY: number
   private styles: PdfStyles
 
   constructor() {
-    this.doc = new jsPDF.jsPDF()
+    this.doc = new jsPDF()
     this.pageWidth = this.doc.internal.pageSize.getWidth()
     this.pageHeight = this.doc.internal.pageSize.getHeight()
     this.currentY = PDF_STYLES.spacing.margin
