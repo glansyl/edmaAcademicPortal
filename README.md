@@ -1,4 +1,4 @@
-Efficient Academic Data Management System (EADMS) 🎓
+**Efficient Academic Data Management System (EADMS)** 🎓
 
 Course: Software Engineering II
 
