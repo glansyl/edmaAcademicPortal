@@ -89,19 +89,19 @@ public class ScheduleService {
             throw new BadRequestException("End time must be after start time");
         }
         
-        // Check for conflicts
-        List<Schedule> conflicts = scheduleRepository.findConflictingSchedules(
-                teacher.getId(), scheduleDTO.getStartDateTime(), scheduleDTO.getEndDateTime());
-        
-        if (!conflicts.isEmpty()) {
-            Schedule conflict = conflicts.get(0);
-            throw new ScheduleConflictException(String.format(
-                "Schedule conflicts with existing class '%s' from %s to %s", 
-                conflict.getTitle(),
-                conflict.getStartDateTime(),
-                conflict.getEndDateTime()
-            ));
-        }
+    // Check for conflicts
+    List<Schedule> conflicts = scheduleRepository.findConflictingSchedules(
+            teacher.getId(), scheduleDTO.getStartDateTime(), scheduleDTO.getEndDateTime());
+    
+    if (!conflicts.isEmpty()) {
+        Schedule conflict = conflicts.get(0);
+        throw new ScheduleConflictException(String.format(
+            "Schedule conflicts with existing class '%s' from %s to %s", 
+            conflict.getTitle(),
+            conflict.getStartDateTime(),
+            conflict.getEndDateTime()
+        ));
+    }
         
         Schedule schedule = Schedule.builder()
                 .course(course)
