@@ -1,11 +1,12 @@
 **Efficient Academic Data Management System (EADMS)** 🎓
-
+---
 Course: Software Engineering II
 
 Institution: University of Europe for Applied Sciences (UE)
 
+---
 Team Members:
-
+---
 Saniya Sunny (67168510)
 
 Ann Alex (24202804)
@@ -14,6 +15,7 @@ Glansyl Meldon Dsouza (69082142)
 
 Sukhpreet Kaur (49495067)
 
+---
 A complete academic data management system developed using Spring Boot for the backend and React with TypeScript for the frontend. The application is intended to simulate a real-world academic management platform and includes features such as role-based access control, secure authentication, academic record management, and automated PDF report generation. The system is designed with production-level considerations, including validation, error handling, and deployment readiness.
 
 Project Overview
@@ -150,4 +152,37 @@ Support is provided through the project repository issue tracker and the availab
 Academic Note
 
 This project was developed for academic purposes and demonstrates the application of full-stack development techniques, layered architecture, secure authentication, and deployment-oriented configuration in a modern web application.
+
+---
+
+## **Running EADMS Locally**
+
+Clone the repository and navigate to the project directory:
+
+```bash
+git clone <repository-url>
+cd edmaAcademicPortal
+```
+
+Start the backend:
+
+```bash
+java -jar target/eadms-1.0.0.jar
+```
+
+Start the frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The backend runs on `http://localhost:8080` and the frontend on `http://localhost:5173`.
+Environment variables (such as API URLs and secrets) should be stored in `.env` files and must not be committed to the repository.
+This project is intended for academic use only.
+
+---
+
+
 
