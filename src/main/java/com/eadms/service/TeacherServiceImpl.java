@@ -2,6 +2,7 @@ package com.eadms.service;
 
 import com.eadms.dto.request.TeacherCreateRequest;
 import com.eadms.dto.response.TeacherResponse;
+import com.eadms.entity.Course;
 import com.eadms.entity.Teacher;
 import com.eadms.entity.User;
 import com.eadms.exception.BadRequestException;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +92,34 @@ public class TeacherServiceImpl implements TeacherService {
     public void deleteTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Teacher", "id", id));
-        teacherRepository.delete(teacher);
+        
+        // Get the associated user before deleting the teacher
+        User user = teacher.getUser();
+        
+        try {
+            // First, remove teacher from all assigned courses to avoid foreign key constraint violations
+            if (teacher.getCourses() != null && !teacher.getCourses().isEmpty()) {
+                // Create a copy of the list to avoid ConcurrentModificationException
+                List<Course> coursesToUpdate = new ArrayList<>(teacher.getCourses());
+                for (Course course : coursesToUpdate) {
+                    course.getTeachers().remove(teacher);
+                }
+                teacher.getCourses().clear();
+            }
+            
+            // Delete the teacher (this will handle cascading to related entities)
+            teacherRepository.delete(teacher);
+            
+            // Then delete the associated user
+            if (user != null) {
+                userRepository.delete(user);
+            }
+        } catch (Exception e) {
+            // Log the error for debugging
+            System.err.println("Error deleting teacher with ID " + id + ": " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete teacher: " + e.getMessage(), e);
+        }
     }
     
     @Override

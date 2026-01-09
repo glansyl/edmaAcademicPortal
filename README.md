@@ -1,465 +1,139 @@
-# Efficient Academic Data Management System (EADMS)
+Efficient Academic Data Management System (EADMS)
 
-A complete, production-grade Academic Data Management System built with **Spring Boot 3.x** backend and **React 18+ with TypeScript** frontend. Features role-based access control, JWT authentication, PDF report generation, and a polished professional UI.
+A complete academic data management system developed using Spring Boot for the backend and React with TypeScript for the frontend. The application is intended to simulate a real-world academic management platform and includes features such as role-based access control, secure authentication, academic record management, and automated PDF report generation. The system is designed with production-level considerations, including validation, error handling, and deployment readiness.
 
-## 🎯 Project Overview
+Project Overview
 
-EADMS is a comprehensive web-based platform for managing academic data in educational institutions. It supports three user roles (Admin, Teacher, Student) and manages students, teachers, courses, marks, attendance records with professional PDF report generation capabilities.
+The Efficient Academic Data Management System (EADMS) is a web-based platform created to manage academic data within an educational institution. The system supports three types of users: administrators, teachers, and students. Each user role is assigned specific permissions to ensure that access to data and system functionality is properly controlled.
 
-**✅ Latest Update (Jan 2026)**: Added Student Report Card PDF Download feature with professional academic formatting. Repository cleaned and optimized for production. Support ticket system removed to streamline the application. System is production-ready with comprehensive validation and PDF generation capabilities.
+The application provides functionality for managing student records, teacher profiles, course information, examination marks, and attendance records. In addition, the system supports the generation of academic reports in PDF format, allowing students to download structured report cards.
 
-### Key Features
+A system update completed in January 2026 introduced student report card PDF downloads with standardized academic formatting. During this update, the repository was reviewed, unnecessary components were removed, and the overall structure was optimized to improve maintainability and deployment readiness.
 
-- **Role-Based Access Control**: Three distinct user roles with specific permissions
-- **JWT Authentication**: Secure token-based authentication with 24-hour expiration
-- **Academic Management**: Complete student, teacher, course, marks, and attendance management
-- **PDF Report Generation**: Professional student report cards and attendance reports
-- **RESTful API**: Well-structured REST APIs following best practices
-- **Professional UI**: Modern, responsive design with Tailwind CSS and Shadcn/ui
-- **Data Visualization**: Interactive charts and graphs for academic analytics
-- **Real-time Statistics**: Dashboard with live metrics and insights
-- **Production-Ready**: Comprehensive API validation, error handling, and edge case coverage
+Key Features
 
-## 🏗️ Architecture
+The system implements role-based access control with three clearly defined roles. Secure authentication is implemented using JSON Web Tokens with a fixed expiration period. Academic data management includes support for students, teachers, courses, marks, and attendance records.
 
-### Backend Architecture
-- **Layered Architecture**: Clear separation of concerns
-- **MVC Pattern**: Model-View-Controller design
-- **SOLID Principles**: Clean, maintainable code
-- **Repository Pattern**: Data access abstraction
-- **Service Layer**: Business logic encapsulation
-- **DTO Pattern**: Data transfer objects for API contracts
+The application provides PDF report generation for student report cards and attendance summaries. The backend exposes RESTful APIs that follow established best practices. The frontend presents a responsive and professional user interface built with modern styling libraries.
 
-### Technology Stack
+The system includes interactive data visualization components for academic analytics, real-time dashboard statistics, and comprehensive validation and error handling to ensure consistent system behavior in production environments.
 
-#### Backend
-- **Java 17+**
-- **Spring Boot 3.2.1**
-- **Spring Web** (REST APIs)
-- **Spring Data JPA** with Hibernate
-- **Spring Security 6.x** with JWT
-- **PostgreSQL** (Production) / **H2** (Development)
-- **Maven** (Build tool)
-- **Lombok** (Boilerplate reduction)
-- **ModelMapper** (Object mapping)
+Architecture
 
-#### Frontend
-- **React 18+** with **Vite**
-- **TypeScript** (Type safety)
-- **Tailwind CSS** (Styling)
-- **Shadcn/ui** (Component library)
-- **React Router v6** (Routing)
-- **Axios** (HTTP client)
-- **React Hook Form + Zod** (Form validation)
-- **Recharts** (Data visualization)
-- **Lucide React** (Icons)
-- **React Hot Toast** (Notifications)
+Backend Architecture
 
-## 📁 Project Structure
+The backend follows a layered architectural approach to maintain a clear separation of concerns. Controllers are responsible for handling HTTP requests and responses. The service layer contains business logic. The repository layer abstracts database operations. Data transfer objects are used to define API contracts, and utility classes support validation and response handling.
 
-```
+The application design follows the Model View Controller pattern and applies object-oriented design principles, including SOLID principles, to ensure clean and maintainable code.
+
+Technology Stack
+
+Backend
+
+The backend is developed using Java 17 and Spring Boot version 3.2.1. It uses Spring Web for REST API development and Spring Data JPA with Hibernate for persistence. Spring Security is used to enforce authentication and authorization using JWT. PostgreSQL is used as the production database, while H2 is used for development and testing. Maven is used as the build tool. Lombok is used to reduce boilerplate code, and ModelMapper is used for object mapping.
+
+Frontend
+
+The frontend is developed using React 18 with Vite and TypeScript. Tailwind CSS is used for styling, and Shadcn UI is used for reusable components. Client-side routing is handled using React Router version 6. Axios is used for HTTP communication. Form validation is implemented using React Hook Form and Zod. Recharts is used for data visualization, and Lucide React is used for icons. Notifications are handled using React Hot Toast.
+
+Project Structure
+
+The project is organized into multiple directories to clearly separate concerns. Documentation files are stored in the docs directory. The frontend directory contains all React and TypeScript source files, including components, pages for different user roles, services, context providers, and utility functions.
+
 eadms/
-├── docs/                           # Documentation
-│   ├── API_TESTING_GUIDE.md
-│   ├── DATABASE_SETUP.md
-│   ├── DEPLOYMENT.md
-│   ├── ENV_VARS.md
-│   ├── QA_VERIFICATION_REPORT.md
-│   ├── RENDER_SETUP.md
-│   ├── VERCEL_SETUP.md
-│   └── WEBSOCKET_IMPLEMENTATION.md
-├── frontend/                       # React TypeScript Frontend
-│   ├── src/
-│   │   ├── components/            # Reusable UI components
-│   │   ├── pages/                 # Page components
-│   │   │   ├── admin/            # Admin dashboard & management
-│   │   │   ├── student/          # Student dashboard & views
-│   │   │   └── teacher/          # Teacher dashboard & tools
-│   │   ├── services/             # API service layer
-│   │   ├── contexts/             # React contexts (Auth, etc.)
-│   │   ├── types/                # TypeScript type definitions
-│   │   └── lib/                  # Utilities and helpers
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tailwind.config.js
-├── src/main/java/com/eadms/       # Spring Boot Backend
-│   ├── EadmsApplication.java
-│   ├── config/
-│   │   ├── SecurityConfig.java
-│   │   ├── JwtAuthenticationFilter.java
-│   │   ├── JwtTokenProvider.java
-│   │   ├── CorsConfig.java
-│   │   ├── WebSocketConfig.java
-│   │   └── DataInitializer.java
-│   ├── entity/
-│   │   ├── User.java
-│   │   ├── Student.java
-│   │   ├── Teacher.java
-│   │   ├── Course.java
-│   │   ├── Marks.java
-│   │   ├── Attendance.java
-│   │   └── BaseEntity.java
-│   ├── repository/
-│   │   ├── UserRepository.java
-│   │   ├── StudentRepository.java
-│   │   ├── TeacherRepository.java
-│   │   ├── CourseRepository.java
-│   │   ├── MarksRepository.java
-│   │   └── AttendanceRepository.java
-│   ├── service/
-│   │   ├── AuthService.java & Impl
-│   │   ├── StudentService.java & Impl
-│   │   ├── TeacherService.java & Impl
-│   │   ├── CourseService.java & Impl
-│   │   ├── MarksService.java & Impl
-│   │   ├── AttendanceService.java & Impl
-│   │   └── ReportService.java & Impl
-│   ├── controller/
-│   │   ├── AuthController.java
-│   │   ├── AdminController.java
-│   │   ├── TeacherController.java
-│   │   ├── StudentController.java
-│   │   └── ReportController.java
-│   ├── dto/
-│   │   ├── request/ (LoginRequest, Create/Update DTOs)
-│   │   └── response/ (Response DTOs, ApiResponse)
-│   ├── exception/
-│   │   ├── GlobalExceptionHandler.java
-│   │   └── Custom exceptions
-│   └── util/
-│       ├── ResponseUtil.java
-│       └── ValidationUtil.java
-├── src/main/resources/
-│   ├── application.properties
-│   ├── application-dev.properties
-│   ├── application-prod.properties
-│   └── db/migration/
-│       └── V1__initial_schema.sql
-├── scripts/                        # Utility scripts
-│   ├── migrate_data.py
-│   ├── verify_backend.py
-│   └── requirements.txt
-├── pom.xml                        # Maven configuration
-├── Dockerfile                     # Docker configuration
-├── render.yaml                    # Render deployment config
-└── vercel.json                    # Vercel deployment config
-```
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- **Java 17** or higher
-- **Maven 3.8+**
-- **Node.js 18+** and **npm/yarn**
-- **PostgreSQL** (for production) or use H2 (for development)
-
-### Backend Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd edma
-   ```
-
-2. **Configure the database**
-   
-   For development (H2 - no configuration needed):
-   ```bash
-   # Already configured in application-dev.properties
-   ```
-   
-   For production (PostgreSQL):
-   ```properties
-   # Update src/main/resources/application-prod.properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/eadmsdb
-   spring.datasource.username=your_username
-   spring.datasource.password=your_password
-   ```
-
-3. **Build the project**
-   ```bash
-   mvn clean install
-   ```
-
-4. **Run the application**
-   ```bash
-   # Development mode (H2 database)
-   mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
-   
-   # Production mode (PostgreSQL)
-   mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=prod"
-   ```
-
-5. **Access the application**
-   - Backend API: `http://localhost:8080`
-   - H2 Console: `http://localhost:8080/h2-console` (dev only)
-   - API Health Check: `http://localhost:8080/`
-
-### Frontend Setup
-
-1. **Navigate to frontend directory**
-   ```bash
-   cd frontend
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment**
-   ```bash
-   # Copy environment file
-   cp .env.example .env
-   
-   # Update .env with your backend URL
-   VITE_API_URL=http://localhost:8080/api
-   VITE_WS_URL=http://localhost:8080
-   ```
-
-4. **Run development server**
-   ```bash
-   npm run dev
-   ```
-
-5. **Access frontend**
-   - Frontend: `http://localhost:5173` (or next available port)
-   - Login with default admin credentials (see below)
-
-## 📊 Database Schema
-
-### Entities
-
-1. **User** - Authentication and authorization
-   - Fields: email, password (BCrypt), role (ADMIN/TEACHER/STUDENT), isActive
-   - Relationships: OneToOne with Student or Teacher
-
-2. **Student** - Student information
-   - Fields: firstName, lastName, studentId, className, gender, contact, DOB
-   - Relationships: OneToOne with User, OneToMany with Marks and Attendance
-
-3. **Teacher** - Teacher information
-   - Fields: firstName, lastName, teacherId, department, email, contact
-   - Relationships: OneToOne with User, OneToMany with Courses
-
-4. **Course** - Course details
-   - Fields: courseCode, courseName, semester, credits, description
-   - Relationships: ManyToOne with Teacher, OneToMany with Marks and Attendance
-
-5. **Marks** - Student marks/grades
-   - Fields: examType, marksObtained, maxMarks, remarks, examDate
-   - Relationships: ManyToOne with Student and Course
-
-6. **Attendance** - Attendance records
-   - Fields: attendanceDate, status (PRESENT/ABSENT/LATE/EXCUSED)
-   - Relationships: ManyToOne with Student and Course
-
-## 🔐 API Endpoints
-
-### Authentication (`/api/auth`)
-- `POST /login` - User login
-- `GET /me` - Get current user
-
-### Admin (`/api/admin`) - Requires ADMIN role
-- **Students**
-  - `POST /students` - Create student
-  - `GET /students` - Get all students
-  - `GET /students/{id}` - Get student by ID
-  - `PUT /students/{id}` - Update student
-  - `DELETE /students/{id}` - Delete student
-
-- **Teachers**
-  - `POST /teachers` - Create teacher
-  - `GET /teachers` - Get all teachers
-  - `PUT /teachers/{id}` - Update teacher
-  - `DELETE /teachers/{id}` - Delete teacher
-
-- **Courses**
-  - `POST /courses` - Create course
-  - `GET /courses` - Get all courses
-  - `PUT /courses/{id}` - Update course
-  - `PUT /courses/{courseId}/assign-teacher/{teacherId}` - Assign teacher
-  - `DELETE /courses/{id}` - Delete course
-
-- **Dashboard**
-  - `GET /dashboard/stats` - Get admin dashboard statistics
-
-### Teacher (`/api/teacher`) - Requires TEACHER role
-- `GET /dashboard/stats` - Get teacher dashboard statistics
-- `GET /courses` - Get teacher's courses
-- `POST /marks` - Enter marks
-- `PUT /marks/{id}` - Update marks
-- `GET /marks/course/{courseId}` - Get marks by course
-- `POST /attendance` - Mark attendance
-- `PUT /attendance/{id}` - Update attendance
-- `GET /attendance/course/{courseId}` - Get attendance by course
-- `GET /course/{courseId}/average` - Get course average
-
-### Student (`/api/student`) - Requires STUDENT role
-- `GET /dashboard/stats` - Get student dashboard statistics
-- `GET /profile` - Get student profile
-- `GET /marks` - Get student marks
-- `GET /attendance` - Get student attendance
-- `GET /attendance/stats` - Get attendance statistics
-- `GET /gpa` - Get student GPA
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-mvn test
-
-# Run specific test class
-mvn test -Dtest=StudentServiceTest
-
-# Run with coverage
-mvn clean test jacoco:report
-```
-
-## ✅ Quality Assurance
-
-### API Contract Validation (Jan 2026)
-A comprehensive Level-2 API QA audit was conducted covering:
-
-**Contract Correctness**
-- ✅ All TypeScript interfaces match backend DTOs exactly
-- ✅ Field naming consistency (`contactNumber` not `contact`)
-- ✅ Enum values validated (MALE|FEMALE|OTHER, exam types, statuses)
-- ✅ Date formats verified (ISO strings, proper parsing)
-
-**Error Handling**
-- ✅ HTTP status codes properly differentiated (400/401/403/404/409/500)
-- ✅ User-friendly error messages for all failure scenarios
-- ✅ Referential integrity violations detected (409 on delete)
-- ✅ Validation errors with specific field feedback
-
-**Edge Cases**
-- ✅ Empty data states handled with proper UI
-- ✅ Null/undefined field handling with optional chaining
-- ✅ Invalid inputs validated before submission
-- ✅ Stale data refresh on 404 errors
-
-**Security & Authorization**
-- ✅ JWT token validation on all protected endpoints
-- ✅ Role-based access control enforced
-- ✅ 401 auto-redirects to login with token cleanup
-- ✅ 403 forbidden access properly communicated
-
-**Performance**
-- ✅ No infinite render loops
-- ✅ No duplicate API calls
-- ✅ Minimal network chatter
-- ✅ Efficient useEffect dependencies
-
-### Fixed Issues
-1. **Critical**: Field name mismatch (`contact` vs `contactNumber`) causing data loss
-2. **High**: Generic error messages - now status-specific
-3. **Medium**: Missing empty state handling
-4. **Medium**: TypeScript type safety improvements
-
-## 🔧 Configuration
-
-### JWT Configuration
-```properties
-jwt.secret=your-secret-key-minimum-32-characters
-jwt.expiration=86400000  # 24 hours in milliseconds
-```
-
-### CORS Configuration
-Frontend origins are configured in `CorsConfig.java`:
-```java
-configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
-```
-
-## 📝 Default Credentials
-
-After running the application, the system automatically creates a default admin user:
-
-### Admin
-- Email: `admin@eadms.com`
-- Password: `Admin@123`
-
-**Note**: Additional users (teachers and students) can be created through the admin panel or by running the data migration script in the `scripts/` directory.
-
-## 🎨 UI/UX Design Principles
-
-The frontend follows these design principles:
-- **Modern Color Palette**: Professional blue (#2563eb) primary, warm accents
-- **Typography**: Clear hierarchy with Inter font family
-- **Spacing**: Consistent spacing scale (4px, 8px, 16px, 24px, 32px)
-- **Shadows & Borders**: Subtle elevation with rounded corners
-- **Responsive**: Mobile-first approach with Tailwind breakpoints
-- **Accessibility**: WCAG AA compliant, keyboard navigation support
-- **Micro-interactions**: Smooth animations and transitions
-
-## 📦 Build & Deployment
-
-### Development Build
-```bash
-mvn spring-boot:run
-```
-
-### Production Build
-```bash
-# Backend
-mvn clean package -DskipTests
-java -jar target/eadms-1.0.0.jar --spring.profiles.active=prod
-
-# Frontend
-cd frontend
-npm run build
-# Serve dist/ folder with your preferred web server
-```
-
-### Docker Deployment
-```bash
-# Build Docker image
-docker build -t eadms-backend .
-
-# Run container
-docker run -p 8080:8080 eadms-backend
-```
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 👥 Authors
-
-- Development Team - EADMS Project
-
-## 🙏 Acknowledgments
-
-- Spring Boot Documentation
-- React Documentation
-- Tailwind CSS
-- Shadcn/ui Component Library
-
-## 📚 Documentation
-
-Comprehensive documentation is available in the `docs/` directory:
-
-- **API_TESTING_GUIDE.md** - Complete API testing instructions
-- **DATABASE_SETUP.md** - Database configuration and schema details
-- **DEPLOYMENT.md** - Production deployment guide
-- **ENV_VARS.md** - Environment variables configuration
-- **QA_VERIFICATION_REPORT.md** - Quality assurance test results
-- **RENDER_SETUP.md** - Render.com deployment instructions
-- **VERCEL_SETUP.md** - Vercel deployment instructions
-
-## 📞 Support
-
-For support, open an issue in the repository or refer to the documentation in the `docs/` directory.
-
----
-
-**Note**: This is an academic project demonstrating best practices in full-stack development, including layered architecture, SOLID principles, modern UI/UX design, and production-ready deployment configurations.
+├── frontend/              # React + TypeScript frontend
+├── src/main/java/         # Spring Boot backend source
+├── src/main/resources/    # Configuration and database migration
+├── docs/                  # Technical documentation
+├── scripts/               # Utility and verification scripts
+├── pom.xml                # Maven configuration
+├── Dockerfile             # Container configuration
+
+The backend source code is located under src/main/java and is organized into configuration, entity, repository, service, controller, DTO, exception, and utility packages. Application configuration files and database migration scripts are stored under src/main/resources. Additional scripts for verification and migration are stored in the scripts directory.
+
+Getting Started
+
+Prerequisites
+
+To run the project, Java version 17 or higher is required along with Maven version 3.8 or higher. Node.js version 18 or higher is required for the frontend. PostgreSQL is required for production deployment, while H2 can be used for development.
+
+Backend Setup
+
+The repository must be cloned and the project directory opened. For development, the H2 database is preconfigured and does not require additional setup. For production, PostgreSQL connection details must be configured in the application properties file.
+
+The backend project is built using Maven and can be run using Spring Boot with either the development or production profile. Once started, the backend API is accessible on port 8080. The H2 console is available in development mode.
+
+Frontend Setup
+
+The frontend setup requires navigating to the frontend directory and installing dependencies using npm. Environment variables must be configured to specify the backend API and WebSocket URLs. After configuration, the development server can be started and accessed through the browser.
+
+Database Schema
+
+The database schema includes entities for users, students, teachers, courses, marks, and attendance records.
+
+The user entity handles authentication and authorization and stores encrypted passwords and role information. The student entity stores personal and academic information and maintains relationships with marks and attendance records. The teacher entity stores faculty details and is associated with courses. The course entity represents academic courses and is linked to teachers, marks, and attendance. The marks entity stores examination results, and the attendance entity stores attendance status for students in each course.
+
+API Endpoints
+
+Authentication endpoints provide login functionality and retrieval of the currently authenticated user.
+
+Administrative endpoints allow administrators to create, update, retrieve, and delete students, teachers, and courses. Administrators can also assign teachers to courses and view dashboard statistics.
+
+Teacher endpoints allow teachers to view assigned courses, record and update marks, mark attendance, view course statistics, and access dashboard metrics.
+
+Student endpoints allow students to view their profile, marks, attendance records, attendance statistics, GPA, and dashboard summaries.
+
+Testing
+
+The project includes automated testing support using Maven. Tests can be executed for the entire project or for individual test classes. Code coverage reports can also be generated.
+
+Quality Assurance
+
+A structured quality assurance audit was conducted in January 2026. The audit verified API contract correctness, field naming consistency, enum validation, and date format handling. Error handling was reviewed to ensure appropriate HTTP status codes and user-friendly messages.
+
+Edge cases such as empty data states, invalid inputs, and stale data scenarios were tested. Security validation confirmed that JWT authentication and role-based authorization were correctly enforced. Performance testing ensured that unnecessary API calls and rendering loops were avoided.
+
+Configuration
+
+JWT configuration includes a secret key and token expiration duration. CORS configuration restricts frontend origins and is defined within the backend configuration classes.
+
+Default Credentials
+
+Upon initial startup, the system creates a default administrator account. This account can be used to access the admin panel and create additional users such as teachers and students.
+
+User Interface Design Principles
+
+The frontend design follows a professional color palette, consistent typography, structured spacing, and subtle visual elevation. The layout is responsive and supports multiple screen sizes. Accessibility considerations such as keyboard navigation and readable contrast are included. Smooth transitions and animations are used to improve user experience.
+
+Build and Deployment
+
+The application supports development and production builds. The backend can be packaged as a standalone executable JAR file. The frontend can be built into static assets for deployment using a web server. Docker-based deployment is supported using the provided Docker configuration.
+
+Contributing
+
+Contributions follow a standard workflow involving repository forking, feature branch creation, commit submission, and pull request review.
+
+License
+
+This project is distributed under the MIT License.
+
+Authors
+
+Development Team, EADMS Project
+
+Acknowledgments
+
+The project references official documentation and learning resources from Spring Boot, React, Tailwind CSS, and Shadcn UI.
+
+Documentation
+
+Additional documentation is available in the docs directory, including API testing guides, database setup instructions, deployment documentation, environment variable configuration, and quality assurance reports.
+
+Support
+
+Support is provided through the project repository issue tracker and the available documentation.
+
+Academic Note
+
+This project was developed for academic purposes and demonstrates the application of full-stack development techniques, layered architecture, secure authentication, and deployment-oriented configuration in a modern web application.
+
